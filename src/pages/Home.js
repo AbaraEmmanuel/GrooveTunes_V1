@@ -2,7 +2,6 @@
 import { useState } from "react"
 import {
   Container,
-  Box,
   Typography,
   Button,
   Grid,
@@ -176,30 +175,18 @@ const Home = () => {
   }
 
   return (
-    <Box sx={{ bgcolor: "#121212", color: "#fff", minHeight: "100vh" }}>
+    <div className="bg-gray-900 text-white min-h-screen">
       {/* Navigation Bar */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          p: 2,
-          borderBottom: "1px solid rgba(255,255,255,0.1)",
-          position: "sticky",
-          top: 0,
-          zIndex: 1000,
-          bgcolor: "rgba(18,18,18,0.9)",
-        }}
-      >
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <MusicNote sx={{ color: "#1DB954", fontSize: 32, mr: 1 }} />
-          <Typography variant="h5" component="h1" sx={{ fontWeight: "bold", color: "#1DB954" }}>
+      <div className="flex items-center justify-between p-4 border-b border-gray-800 sticky top-0 z-10 bg-gray-900">
+        <div className="flex items-center">
+          <MusicNote style={{ color: "#1DB954", fontSize: 32, marginRight: 8 }} />
+          <Typography variant="h5" component="h1" style={{ fontWeight: "bold", color: "#1DB954" }}>
             GrooveTunes
           </Typography>
-        </Box>
+        </div>
 
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <IconButton sx={{ color: "#fff" }}>
+        <div className="flex items-center">
+          <IconButton style={{ color: "#fff" }}>
             <Search />
           </IconButton>
 
@@ -209,119 +196,73 @@ const Home = () => {
             component={Link}
             to="/login"
             startIcon={<Person />}
-            sx={{
-              ml: 2,
-              bgcolor: "#1DB954",
+            style={{
+              marginLeft: 16,
+              backgroundColor: "#1DB954",
               borderRadius: "20px",
-              px: 2,
-              "&:hover": {
-                bgcolor: "#18a84a",
-              },
+              padding: "4px 16px",
             }}
           >
             Log In
           </Button>
-        </Box>
-      </Box>
+        </div>
+      </div>
 
       {/* Hero Section */}
-      <Box
-        sx={{
-          position: "relative",
-          height: { xs: "70vh", md: "80vh" },
-          display: "flex",
-          alignItems: "center",
-          overflow: "hidden",
-        }}
-      >
+      <div className="relative h-screen flex items-center">
         {/* Background Image with Overlay */}
-        <Box
-          sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
             backgroundImage:
               "url(https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80)",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            "&:after": {
-              content: '""',
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: "linear-gradient(to bottom, rgba(18,18,18,0.7) 0%, rgba(18,18,18,0.9) 100%)",
-            },
-            zIndex: 0,
-          }}
-        />
-
-        <Container
-          maxWidth="xl"
-          sx={{
-            position: "relative",
-            zIndex: 1,
-            textAlign: "center",
           }}
         >
+          <div className="absolute inset-0 bg-black bg-opacity-70"></div>
+        </div>
+
+        <Container maxWidth="xl" className="relative z-10 text-center">
           <Typography
             variant="h1"
             component="h2"
-            sx={{
+            style={{
               fontWeight: 900,
-              fontSize: { xs: "2.5rem", sm: "3.5rem", md: "4.5rem" },
+              fontSize: "4rem",
               color: "#fff",
-              mb: 2,
-              textShadow: "0 2px 10px rgba(0,0,0,0.3)",
+              marginBottom: 16,
               lineHeight: 1.1,
             }}
           >
             Your Music, <br />
-            <Box component="span" sx={{ color: "#1DB954" }}>
-              Your Vibe
-            </Box>
+            <span style={{ color: "#1DB954" }}>Your Vibe</span>
           </Typography>
 
           <Typography
             variant="h5"
-            sx={{
+            style={{
               color: "rgba(255,255,255,0.8)",
-              mb: 4,
+              marginBottom: 32,
               maxWidth: "600px",
-              mx: "auto",
+              margin: "0 auto 32px",
             }}
           >
             Discover, stream, and share a constantly expanding mix of music from emerging and major artists around the
             world.
           </Typography>
 
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: { xs: "column", sm: "row" },
-              gap: 2,
-              justifyContent: "center",
-            }}
-          >
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               variant="contained"
               size="large"
               startIcon={<PlayArrow />}
               component={Link}
               to="/signup"
-              sx={{
-                bgcolor: "#1DB954",
+              style={{
+                backgroundColor: "#1DB954",
                 borderRadius: "30px",
-                px: 4,
-                py: 1.5,
+                padding: "12px 32px",
                 fontSize: "1.1rem",
                 fontWeight: "bold",
-                "&:hover": {
-                  bgcolor: "#18a84a",
-                },
               }}
             >
               Start Listening Free
@@ -332,120 +273,83 @@ const Home = () => {
               size="large"
               component={Link}
               to="/premium"
-              sx={{
+              style={{
                 color: "#fff",
                 borderColor: "rgba(255,255,255,0.5)",
                 borderRadius: "30px",
-                px: 4,
-                py: 1.5,
+                padding: "12px 32px",
                 fontSize: "1.1rem",
                 fontWeight: "bold",
-                "&:hover": {
-                  borderColor: "#fff",
-                  bgcolor: "rgba(255,255,255,0.1)",
-                },
               }}
             >
               See Premium Plans
             </Button>
-          </Box>
+          </div>
         </Container>
-      </Box>
+      </div>
 
       {/* Featured Playlists Section */}
-      <Container maxWidth="xl" sx={{ mt: 8, mb: 8 }}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 4,
-          }}
-        >
-          <Typography variant="h4" component="h2" sx={{ fontWeight: "bold", color: "#fff" }}>
+      <Container maxWidth="xl" style={{ marginTop: 64, marginBottom: 64 }}>
+        <div className="flex justify-between items-center mb-8">
+          <Typography variant="h4" component="h2" style={{ fontWeight: "bold", color: "#fff" }}>
             Featured Playlists
           </Typography>
 
           <Button
             endIcon={<Explore />}
-            sx={{
+            style={{
               color: "rgba(255,255,255,0.7)",
-              "&:hover": { color: "#1DB954" },
             }}
           >
             See All
           </Button>
-        </Box>
+        </div>
 
         <Grid container spacing={3}>
           {featuredPlaylists.map((playlist) => (
             <Grid item xs={12} sm={6} md={4} key={playlist.id}>
               <Paper
                 elevation={3}
-                sx={{
-                  bgcolor: "#181818",
+                style={{
+                  backgroundColor: "#181818",
                   borderRadius: "12px",
                   overflow: "hidden",
-                  transition: "all 0.3s ease",
-                  "&:hover": {
-                    transform: "translateY(-8px)",
-                    boxShadow: "0 16px 30px rgba(0,0,0,0.3)",
-                    "& .playButton": {
-                      opacity: 1,
-                      transform: "translateY(0) scale(1)",
-                    },
-                  },
-                  position: "relative",
                   cursor: "pointer",
                 }}
                 onClick={() => playPlaylist(playlist)}
               >
-                <Box sx={{ position: "relative" }}>
+                <div className="relative">
                   <CardMedia component="img" height="220" image={playlist.image} alt={playlist.title} />
-                  <Box
-                    className="playButton"
-                    sx={{
-                      position: "absolute",
-                      bottom: "10px",
-                      right: "10px",
+                  <div
+                    className="absolute bottom-2 right-2 opacity-0 transform translate-y-4 scale-75 transition-all duration-300"
+                    style={{
                       opacity: 0,
                       transform: "translateY(20px) scale(0.8)",
                       transition: "all 0.3s ease",
                     }}
                   >
                     <IconButton
-                      sx={{
-                        bgcolor: "#1DB954",
+                      style={{
+                        backgroundColor: "#1DB954",
                         color: "#fff",
-                        "&:hover": {
-                          bgcolor: "#18a84a",
-                        },
-                        boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
                       }}
                     >
                       <PlayArrow fontSize="large" />
                     </IconButton>
-                  </Box>
-                </Box>
+                  </div>
+                </div>
 
                 <CardContent>
-                  <Typography variant="h6" component="div" sx={{ fontWeight: "bold", color: "#fff" }}>
+                  <Typography variant="h6" component="div" style={{ fontWeight: "bold", color: "#fff" }}>
                     {playlist.title}
                   </Typography>
 
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      mt: 1,
-                      color: "rgba(255,255,255,0.7)",
-                    }}
-                  >
-                    <Typography variant="body2" sx={{ mr: 2 }}>
+                  <div className="flex items-center mt-2 text-gray-400">
+                    <Typography variant="body2" style={{ marginRight: 16 }}>
                       {playlist.songs} songs
                     </Typography>
                     <Typography variant="body2">{playlist.followers} followers</Typography>
-                  </Box>
+                  </div>
                 </CardContent>
               </Paper>
             </Grid>
@@ -454,207 +358,125 @@ const Home = () => {
       </Container>
 
       {/* Why GrooveTunes Section */}
-      <Box sx={{ bgcolor: "#181818", py: 8 }}>
+      <div style={{ backgroundColor: "#181818", padding: "64px 0" }}>
         <Container maxWidth="xl">
           <Typography
             variant="h4"
             component="h2"
             align="center"
             gutterBottom
-            sx={{ fontWeight: "bold", color: "#fff", mb: 6 }}
+            style={{ fontWeight: "bold", color: "#fff", marginBottom: 48 }}
           >
-            Why Choose{" "}
-            <Box component="span" sx={{ color: "#1DB954" }}>
-              GrooveTunes
-            </Box>
-            ?
+            Why Choose <span style={{ color: "#1DB954" }}>GrooveTunes</span>?
           </Typography>
 
           <Grid container spacing={4} justifyContent="center">
             <Grid item xs={12} sm={6} md={4}>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  textAlign: "center",
-                  p: 3,
-                  height: "100%",
-                }}
-              >
-                <Box
-                  className="featureIcon"
-                  sx={{
-                    width: 80,
-                    height: 80,
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    bgcolor: "rgba(255,255,255,0.05)",
-                    mb: 3,
-                  }}
+              <div className="flex flex-col items-center text-center p-6 h-full">
+                <div
+                  className="w-20 h-20 rounded-full flex items-center justify-center mb-6"
+                  style={{ backgroundColor: "rgba(255,255,255,0.05)" }}
                 >
-                  <Headphones sx={{ fontSize: 40, color: "#1DB954" }} />
-                </Box>
+                  <Headphones style={{ fontSize: 40, color: "#1DB954" }} />
+                </div>
 
-                <Typography variant="h5" sx={{ fontWeight: "bold", color: "#fff", mb: 2 }}>
+                <Typography variant="h5" style={{ fontWeight: "bold", color: "#fff", marginBottom: 16 }}>
                   Extensive Music Library
                 </Typography>
 
-                <Typography variant="body1" sx={{ color: "rgba(255,255,255,0.7)" }}>
+                <Typography variant="body1" style={{ color: "rgba(255,255,255,0.7)" }}>
                   Access millions of songs from various genres and artists worldwide. Discover new music or enjoy your
                   favorites with our vast collection.
                 </Typography>
-              </Box>
+              </div>
             </Grid>
 
             <Grid item xs={12} sm={6} md={4}>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  textAlign: "center",
-                  p: 3,
-                  height: "100%",
-                }}
-              >
-                <Box
-                  className="featureIcon"
-                  sx={{
-                    width: 80,
-                    height: 80,
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    bgcolor: "rgba(255,255,255,0.05)",
-                    mb: 3,
-                  }}
+              <div className="flex flex-col items-center text-center p-6 h-full">
+                <div
+                  className="w-20 h-20 rounded-full flex items-center justify-center mb-6"
+                  style={{ backgroundColor: "rgba(255,255,255,0.05)" }}
                 >
-                  <PlaylistAdd sx={{ fontSize: 40, color: "#1DB954" }} />
-                </Box>
+                  <PlaylistAdd style={{ fontSize: 40, color: "#1DB954" }} />
+                </div>
 
-                <Typography variant="h5" sx={{ fontWeight: "bold", color: "#fff", mb: 2 }}>
+                <Typography variant="h5" style={{ fontWeight: "bold", color: "#fff", marginBottom: 16 }}>
                   Personalized Playlists
                 </Typography>
 
-                <Typography variant="body1" sx={{ color: "rgba(255,255,255,0.7)" }}>
+                <Typography variant="body1" style={{ color: "rgba(255,255,255,0.7)" }}>
                   Create and customize playlists for every mood and occasion. Our AI also recommends playlists based on
                   your listening habits.
                 </Typography>
-              </Box>
+              </div>
             </Grid>
 
             <Grid item xs={12} sm={6} md={4}>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  textAlign: "center",
-                  p: 3,
-                  height: "100%",
-                }}
-              >
-                <Box
-                  className="featureIcon"
-                  sx={{
-                    width: 80,
-                    height: 80,
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    bgcolor: "rgba(255,255,255,0.05)",
-                    mb: 3,
-                  }}
+              <div className="flex flex-col items-center text-center p-6 h-full">
+                <div
+                  className="w-20 h-20 rounded-full flex items-center justify-center mb-6"
+                  style={{ backgroundColor: "rgba(255,255,255,0.05)" }}
                 >
-                  <Equalizer sx={{ fontSize: 40, color: "#1DB954" }} />
-                </Box>
+                  <Equalizer style={{ fontSize: 40, color: "#1DB954" }} />
+                </div>
 
-                <Typography variant="h5" sx={{ fontWeight: "bold", color: "#fff", mb: 2 }}>
+                <Typography variant="h5" style={{ fontWeight: "bold", color: "#fff", marginBottom: 16 }}>
                   High-Quality Audio
                 </Typography>
 
-                <Typography variant="body1" sx={{ color: "rgba(255,255,255,0.7)" }}>
+                <Typography variant="body1" style={{ color: "rgba(255,255,255,0.7)" }}>
                   Experience crystal-clear sound with our premium audio quality. Enjoy music the way artists intended it
                   to be heard.
                 </Typography>
-              </Box>
+              </div>
             </Grid>
           </Grid>
         </Container>
-      </Box>
+      </div>
 
       {/* Top Trending Afrobeats Artists Section */}
-      <Container maxWidth="xl" sx={{ mt: 8, mb: 8 }}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 4,
-          }}
-        >
-          <Typography variant="h4" component="h2" sx={{ fontWeight: "bold", color: "#fff" }}>
+      <Container maxWidth="xl" style={{ marginTop: 64, marginBottom: 64 }}>
+        <div className="flex justify-between items-center mb-8">
+          <Typography variant="h4" component="h2" style={{ fontWeight: "bold", color: "#fff" }}>
             Top Trending Afrobeats Artists
           </Typography>
 
           <Chip
-            icon={<TrendingUp sx={{ color: "#1DB954 !important" }} />}
+            icon={<TrendingUp style={{ color: "#1DB954" }} />}
             label="Hot Now"
-            sx={{
-              bgcolor: "rgba(29, 185, 84, 0.15)",
+            style={{
+              backgroundColor: "rgba(29, 185, 84, 0.15)",
               color: "#1DB954",
               fontWeight: "bold",
             }}
           />
-        </Box>
+        </div>
 
         <Grid container spacing={3}>
           {artists.map((artist) => (
             <Grid item xs={12} sm={6} md={4} key={artist.id}>
               <Card
-                sx={{
-                  bgcolor: "#181818",
+                style={{
+                  backgroundColor: "#181818",
                   borderRadius: "12px",
                   overflow: "hidden",
-                  transition: "all 0.3s ease",
-                  "&:hover": {
-                    transform: "translateY(-8px)",
-                    boxShadow: "0 16px 30px rgba(0,0,0,0.3)",
-                    "& .artistOverlay": {
-                      opacity: 1,
-                    },
-                  },
                   cursor: "pointer",
                 }}
                 onClick={() => playArtist(artist)}
               >
-                <Box sx={{ position: "relative", overflow: "hidden" }}>
+                <div className="relative overflow-hidden">
                   <CardMedia
                     component="img"
                     height="320"
                     image={artist.image}
                     alt={artist.name}
-                    sx={{
+                    style={{
                       transition: "transform 0.5s ease",
                     }}
                   />
-                  <Box
-                    className="artistOverlay"
-                    sx={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      bgcolor: "rgba(0,0,0,0.5)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
+                  <div
+                    className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 transition-opacity duration-300"
+                    style={{
                       opacity: 0,
                       transition: "opacity 0.3s ease",
                     }}
@@ -662,75 +484,58 @@ const Home = () => {
                     <Button
                       variant="contained"
                       startIcon={<PlayArrow />}
-                      sx={{
-                        bgcolor: "#1DB954",
+                      style={{
+                        backgroundColor: "#1DB954",
                         borderRadius: "30px",
-                        px: 3,
-                        "&:hover": {
-                          bgcolor: "#18a84a",
-                        },
+                        padding: "8px 24px",
                       }}
                     >
                       Play
                     </Button>
-                  </Box>
-                </Box>
+                  </div>
+                </div>
 
-                <CardContent sx={{ position: "relative" }}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Box>
-                      <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: "bold", color: "#fff" }}>
+                <CardContent>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Typography
+                        gutterBottom
+                        variant="h5"
+                        component="div"
+                        style={{ fontWeight: "bold", color: "#fff" }}
+                      >
                         {artist.name}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.7)" }}>
+                      <Typography variant="body2" style={{ color: "rgba(255,255,255,0.7)" }}>
                         {artist.description}
                       </Typography>
-                    </Box>
+                    </div>
 
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        color: "rgba(255,255,255,0.7)",
-                      }}
-                    >
+                    <div className="flex items-center text-gray-400">
                       <IconButton
-                        sx={{
+                        style={{
                           color: likedArtists[artist.id] ? "#1DB954" : "rgba(255,255,255,0.7)",
                         }}
                         onClick={(e) => toggleLike(artist.id, e)}
                       >
                         {likedArtists[artist.id] ? <Favorite /> : <FavoriteBorder />}
                       </IconButton>
-                    </Box>
-                  </Box>
+                    </div>
+                  </div>
 
-                  <Box
-                    sx={{
-                      display: "flex",
-                      mt: 2,
-                      gap: 1,
-                      flexWrap: "wrap",
-                    }}
-                  >
+                  <div className="flex mt-4 gap-2 flex-wrap">
                     {artist.genres.map((genre, index) => (
                       <Chip
                         key={index}
                         label={genre}
                         size="small"
-                        sx={{
-                          bgcolor: "rgba(255,255,255,0.1)",
+                        style={{
+                          backgroundColor: "rgba(255,255,255,0.1)",
                           color: "rgba(255,255,255,0.7)",
                         }}
                       />
                     ))}
-                  </Box>
+                  </div>
                 </CardContent>
               </Card>
             </Grid>
@@ -739,19 +544,14 @@ const Home = () => {
       </Container>
 
       {/* Call to Action */}
-      <Box sx={{ bgcolor: "#1DB954", py: 8 }}>
+      <div style={{ backgroundColor: "#1DB954", padding: "64px 0" }}>
         <Container maxWidth="md">
-          <Box
-            sx={{
-              textAlign: "center",
-              color: "#fff",
-            }}
-          >
-            <Typography variant="h3" component="h2" sx={{ fontWeight: "bold", mb: 3 }}>
+          <div className="text-center text-white">
+            <Typography variant="h3" component="h2" style={{ fontWeight: "bold", marginBottom: 24 }}>
               Ready to Start Grooving?
             </Typography>
 
-            <Typography variant="h6" sx={{ mb: 4, opacity: 0.9 }}>
+            <Typography variant="h6" style={{ marginBottom: 32, opacity: 0.9 }}>
               Join millions of music lovers and discover your next favorite song today.
             </Typography>
 
@@ -760,252 +560,238 @@ const Home = () => {
               size="large"
               component={Link}
               to="/signup"
-              sx={{
-                bgcolor: "#fff",
+              style={{
+                backgroundColor: "#fff",
                 color: "#1DB954",
                 borderRadius: "30px",
-                px: 4,
-                py: 1.5,
+                padding: "12px 32px",
                 fontSize: "1.1rem",
                 fontWeight: "bold",
-                "&:hover": {
-                  bgcolor: "rgba(255,255,255,0.9)",
-                },
               }}
             >
               Get Started Free
             </Button>
-          </Box>
+          </div>
         </Container>
-      </Box>
+      </div>
 
       {/* Footer */}
-      <Box sx={{ bgcolor: "#121212", borderTop: "1px solid rgba(255,255,255,0.1)", py: 6 }}>
+      <div style={{ backgroundColor: "#121212", borderTop: "1px solid rgba(255,255,255,0.1)", padding: "48px 0" }}>
         <Container maxWidth="xl">
           <Grid container spacing={4}>
             <Grid item xs={12} md={4}>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-                <MusicNote sx={{ color: "#1DB954", fontSize: 32, mr: 1 }} />
-                <Typography variant="h5" component="h1" sx={{ fontWeight: "bold", color: "#1DB954" }}>
+              <div className="flex items-center mb-6">
+                <MusicNote style={{ color: "#1DB954", fontSize: 32, marginRight: 8 }} />
+                <Typography variant="h5" component="h1" style={{ fontWeight: "bold", color: "#1DB954" }}>
                   GrooveTunes
                 </Typography>
-              </Box>
+              </div>
 
-              <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.7)", mb: 3 }}>
+              <Typography variant="body2" style={{ color: "rgba(255,255,255,0.7)", marginBottom: 24 }}>
                 GrooveTunes is your ultimate music streaming platform. Discover, listen, and share music from around the
                 world with our cutting-edge audio technology.
               </Typography>
             </Grid>
 
             <Grid item xs={6} sm={3} md={2}>
-              <Typography variant="subtitle1" sx={{ fontWeight: "bold", color: "#fff", mb: 2 }}>
+              <Typography variant="subtitle1" style={{ fontWeight: "bold", color: "#fff", marginBottom: 16 }}>
                 Company
               </Typography>
 
-              <Box component="ul" sx={{ listStyle: "none", p: 0, m: 0 }}>
-                <Box component="li" sx={{ mb: 1 }}>
+              <ul className="list-none p-0 m-0">
+                <li className="mb-2">
                   <Button
-                    sx={{
+                    style={{
                       color: "rgba(255,255,255,0.7)",
-                      p: 0,
+                      padding: 0,
                       textTransform: "none",
                       justifyContent: "flex-start",
-                      "&:hover": { color: "#1DB954" },
                     }}
                   >
                     About
                   </Button>
-                </Box>
-                <Box component="li" sx={{ mb: 1 }}>
+                </li>
+                <li className="mb-2">
                   <Button
-                    sx={{
+                    style={{
                       color: "rgba(255,255,255,0.7)",
-                      p: 0,
+                      padding: 0,
                       textTransform: "none",
                       justifyContent: "flex-start",
-                      "&:hover": { color: "#1DB954" },
                     }}
                   >
                     Jobs
                   </Button>
-                </Box>
-              </Box>
+                </li>
+              </ul>
             </Grid>
 
             <Grid item xs={6} sm={3} md={2}>
-              <Typography variant="subtitle1" sx={{ fontWeight: "bold", color: "#fff", mb: 2 }}>
+              <Typography variant="subtitle1" style={{ fontWeight: "bold", color: "#fff", marginBottom: 16 }}>
                 Communities
               </Typography>
 
-              <Box component="ul" sx={{ listStyle: "none", p: 0, m: 0 }}>
-                <Box component="li" sx={{ mb: 1 }}>
+              <ul className="list-none p-0 m-0">
+                <li className="mb-2">
                   <Button
-                    sx={{
+                    style={{
                       color: "rgba(255,255,255,0.7)",
-                      p: 0,
+                      padding: 0,
                       textTransform: "none",
                       justifyContent: "flex-start",
-                      "&:hover": { color: "#1DB954" },
                     }}
                   >
                     For Artists
                   </Button>
-                </Box>
-                <Box component="li" sx={{ mb: 1 }}>
+                </li>
+                <li className="mb-2">
                   <Button
-                    sx={{
+                    style={{
                       color: "rgba(255,255,255,0.7)",
-                      p: 0,
+                      padding: 0,
                       textTransform: "none",
                       justifyContent: "flex-start",
-                      "&:hover": { color: "#1DB954" },
                     }}
                   >
                     Developers
                   </Button>
-                </Box>
-              </Box>
+                </li>
+              </ul>
             </Grid>
 
             <Grid item xs={6} sm={3} md={2}>
-              <Typography variant="subtitle1" sx={{ fontWeight: "bold", color: "#fff", mb: 2 }}>
+              <Typography variant="subtitle1" style={{ fontWeight: "bold", color: "#fff", marginBottom: 16 }}>
                 Useful Links
               </Typography>
 
-              <Box component="ul" sx={{ listStyle: "none", p: 0, m: 0 }}>
-                <Box component="li" sx={{ mb: 1 }}>
+              <ul className="list-none p-0 m-0">
+                <li className="mb-2">
                   <Button
-                    sx={{
+                    style={{
                       color: "rgba(255,255,255,0.7)",
-                      p: 0,
+                      padding: 0,
                       textTransform: "none",
                       justifyContent: "flex-start",
-                      "&:hover": { color: "#1DB954" },
                     }}
                   >
                     Support
                   </Button>
-                </Box>
-                <Box component="li" sx={{ mb: 1 }}>
+                </li>
+                <li className="mb-2">
                   <Button
-                    sx={{
+                    style={{
                       color: "rgba(255,255,255,0.7)",
-                      p: 0,
+                      padding: 0,
                       textTransform: "none",
                       justifyContent: "flex-start",
-                      "&:hover": { color: "#1DB954" },
                     }}
                   >
                     Web Player
                   </Button>
-                </Box>
-              </Box>
+                </li>
+              </ul>
             </Grid>
 
             <Grid item xs={6} sm={3} md={2}>
-              <Typography variant="subtitle1" sx={{ fontWeight: "bold", color: "#fff", mb: 2 }}>
+              <Typography variant="subtitle1" style={{ fontWeight: "bold", color: "#fff", marginBottom: 16 }}>
                 Legal
               </Typography>
 
-              <Box component="ul" sx={{ listStyle: "none", p: 0, m: 0 }}>
-                <Box component="li" sx={{ mb: 1 }}>
+              <ul className="list-none p-0 m-0">
+                <li className="mb-2">
                   <Button
-                    sx={{
+                    style={{
                       color: "rgba(255,255,255,0.7)",
-                      p: 0,
+                      padding: 0,
                       textTransform: "none",
                       justifyContent: "flex-start",
-                      "&:hover": { color: "#1DB954" },
                     }}
                   >
                     Privacy Policy
                   </Button>
-                </Box>
-                <Box component="li" sx={{ mb: 1 }}>
+                </li>
+                <li className="mb-2">
                   <Button
-                    sx={{
+                    style={{
                       color: "rgba(255,255,255,0.7)",
-                      p: 0,
+                      padding: 0,
                       textTransform: "none",
                       justifyContent: "flex-start",
-                      "&:hover": { color: "#1DB954" },
                     }}
                   >
                     Terms of Use
                   </Button>
-                </Box>
-              </Box>
+                </li>
+              </ul>
             </Grid>
           </Grid>
 
-          <Divider sx={{ my: 4, borderColor: "rgba(255,255,255,0.1)" }} />
+          <Divider style={{ margin: "32px 0", borderColor: "rgba(255,255,255,0.1)" }} />
 
-          <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.5)" }}>
+          <Typography variant="body2" style={{ color: "rgba(255,255,255,0.5)" }}>
             © 2025 GrooveTunes. All rights reserved.
           </Typography>
         </Container>
-      </Box>
+      </div>
 
       {/* Custom Audio Player Integration */}
       {isPlayerVisible && currentTrack && (
-        <Box
-          sx={{
+        <div
+          style={{
             position: "fixed",
             bottom: 0,
             left: 0,
             right: 0,
             zIndex: 1200,
-            bgcolor: "#181818",
+            backgroundColor: "#181818",
             borderTop: "1px solid rgba(255,255,255,0.1)",
-            p: 2,
+            padding: 16,
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
-              <Box
-                component="img"
-                src={currentTrack.coverArt}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center flex-1">
+              <img
+                src={currentTrack.coverArt || "/placeholder.svg"}
                 alt={currentTrack.title}
-                sx={{
+                style={{
                   width: 56,
                   height: 56,
-                  borderRadius: 1,
-                  mr: 2,
+                  borderRadius: 4,
+                  marginRight: 16,
                   objectFit: "cover",
                 }}
               />
-              <Box>
-                <Typography variant="subtitle1" sx={{ color: "#fff", fontWeight: "bold" }}>
+              <div>
+                <Typography variant="subtitle1" style={{ color: "#fff", fontWeight: "bold" }}>
                   {currentTrack.title}
                 </Typography>
-                <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.7)" }}>
+                <Typography variant="body2" style={{ color: "rgba(255,255,255,0.7)" }}>
                   {currentTrack.artist}
                 </Typography>
-              </Box>
-            </Box>
+              </div>
+            </div>
 
-            <Box sx={{ flex: 2 }}>
+            <div className="flex-2">
               <CustomAudioPlayer
                 audioSrc={currentTrack.audioSrc}
                 title={currentTrack.title}
                 artist={currentTrack.artist}
                 coverArt={currentTrack.coverArt}
               />
-            </Box>
+            </div>
 
             <IconButton
               onClick={closePlayer}
-              sx={{
+              style={{
                 color: "rgba(255,255,255,0.7)",
-                "&:hover": { color: "#fff" },
               }}
             >
               <Close />
             </IconButton>
-          </Box>
-        </Box>
+          </div>
+        </div>
       )}
-    </Box>
+    </div>
   )
 }
 
