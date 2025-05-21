@@ -1,4 +1,5 @@
 "use client"
+import { useState } from "react"
 import {
   Container,
   Box,
@@ -28,14 +29,20 @@ import {
   Equalizer,
   Explore,
   TrendingUp,
+  Close,
 } from "@mui/icons-material"
+import CustomAudioPlayer from "./CustomAudioPlayer" // Import your custom audio player
 
 const Home = () => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"))
   const isMedium = useMediaQuery(theme.breakpoints.down("md"))
 
-  // Featured playlists data
+  // State for the currently playing track
+  const [currentTrack, setCurrentTrack] = useState(null)
+  const [isPlayerVisible, setIsPlayerVisible] = useState(false)
+
+  // Featured playlists data with audio tracks
   const featuredPlaylists = [
     {
       id: 1,
@@ -43,6 +50,22 @@ const Home = () => {
       image: "https://i.scdn.co/image/ab67706f00000003b70e0223f544b1faa2e95ed0",
       songs: 42,
       followers: "2.3M",
+      tracks: [
+        {
+          id: "track1",
+          title: "Last Last",
+          artist: "Burna Boy",
+          audioSrc: "/audio/last-last.mp3", // Replace with your actual audio path
+          coverArt: "https://i.scdn.co/image/ab67616d0000b273c5649add07ed3720be9d5526",
+        },
+        {
+          id: "track2",
+          title: "Rush",
+          artist: "Ayra Starr",
+          audioSrc: "/audio/rush.mp3", // Replace with your actual audio path
+          coverArt: "https://i.scdn.co/image/ab67616d0000b273908280d9807127e185b71d87",
+        },
+      ],
     },
     {
       id: 2,
@@ -50,6 +73,22 @@ const Home = () => {
       image: "https://i.scdn.co/image/ab67706f00000003e8e28219724c2423afa4d320",
       songs: 35,
       followers: "1.8M",
+      tracks: [
+        {
+          id: "track3",
+          title: "Calm Down",
+          artist: "Rema",
+          audioSrc: "/audio/calm-down.mp3", // Replace with your actual audio path
+          coverArt: "https://i.scdn.co/image/ab67616d0000b273f29d0c86f34e5d062a5c41e3",
+        },
+        {
+          id: "track4",
+          title: "Essence",
+          artist: "Wizkid ft. Tems",
+          audioSrc: "/audio/essence.mp3", // Replace with your actual audio path
+          coverArt: "https://i.scdn.co/image/ab67616d0000b273c5e2f328b0efb49b09bd22fd",
+        },
+      ],
     },
     {
       id: 3,
@@ -57,8 +96,101 @@ const Home = () => {
       image: "https://i.scdn.co/image/ab67706f000000034d26d431869cabfc53c67d8e",
       songs: 50,
       followers: "3.1M",
+      tracks: [
+        {
+          id: "track5",
+          title: "Sungba (Remix)",
+          artist: "Asake ft. Burna Boy",
+          audioSrc: "/audio/sungba.mp3", // Replace with your actual audio path
+          coverArt: "https://i.scdn.co/image/ab67616d0000b273b5a0c2f8da6f6e7f3ebd8336",
+        },
+        {
+          id: "track6",
+          title: "Finesse",
+          artist: "Pheelz ft. BNXN",
+          audioSrc: "/audio/finesse.mp3", // Replace with your actual audio path
+          coverArt: "https://i.scdn.co/image/ab67616d0000b273ba24e4d731ac1c6b4c8dec31",
+        },
+      ],
     },
   ]
+
+  // Artist data with tracks
+  const artists = [
+    {
+      id: 1,
+      name: "Davido",
+      image: "https://media.premiumtimesng.com/wp-content/files/2023/07/Davido.png",
+      description: "Nigerian singer & producer",
+      followers: "4.2M",
+      genres: ["Afrobeats", "Pop", "R&B"],
+      tracks: [
+        {
+          id: "track7",
+          title: "Unavailable",
+          artist: "Davido ft. Musa Keys",
+          audioSrc: "/audio/unavailable.mp3", // Replace with your actual audio path
+          coverArt: "https://i.scdn.co/image/ab67616d0000b273c5e2f328b0efb49b09bd22fd",
+        },
+      ],
+    },
+    {
+      id: 2,
+      name: "Wizkid",
+      image: "https://i.scdn.co/image/ab6761610000e5eb9050b61368975fda051cdc06",
+      description: "Nigerian singer & songwriter",
+      followers: "5.8M",
+      genres: ["Afrobeats", "Afrofusion", "R&B"],
+      tracks: [
+        {
+          id: "track8",
+          title: "Essence",
+          artist: "Wizkid ft. Tems",
+          audioSrc: "/audio/essence.mp3", // Replace with your actual audio path
+          coverArt: "https://i.scdn.co/image/ab67616d0000b273c5e2f328b0efb49b09bd22fd",
+        },
+      ],
+    },
+    {
+      id: 3,
+      name: "Burna Boy",
+      image: "https://dailytrust.com/wp-content/uploads/2023/04/Burna-Boy-scaled-1.jpg",
+      description: "Nigerian singer & performer",
+      followers: "6.1M",
+      genres: ["Afrobeats", "Dancehall", "Reggae"],
+      tracks: [
+        {
+          id: "track9",
+          title: "Last Last",
+          artist: "Burna Boy",
+          audioSrc: "/audio/last-last.mp3", // Replace with your actual audio path
+          coverArt: "https://i.scdn.co/image/ab67616d0000b273c5649add07ed3720be9d5526",
+        },
+      ],
+    },
+  ]
+
+  // Function to play a track from a playlist
+  const playPlaylist = (playlist) => {
+    if (playlist.tracks && playlist.tracks.length > 0) {
+      setCurrentTrack(playlist.tracks[0])
+      setIsPlayerVisible(true)
+    }
+  }
+
+  // Function to play a track from an artist
+  const playArtist = (artist) => {
+    if (artist.tracks && artist.tracks.length > 0) {
+      setCurrentTrack(artist.tracks[0])
+      setIsPlayerVisible(true)
+    }
+  }
+
+  // Function to close the player
+  const closePlayer = () => {
+    setIsPlayerVisible(false)
+    setCurrentTrack(null)
+  }
 
   return (
     <Box sx={{ bgcolor: "#121212", color: "#fff", minHeight: "100vh" }}>
@@ -436,7 +568,9 @@ const Home = () => {
                     },
                   },
                   position: "relative",
+                  cursor: "pointer",
                 }}
+                onClick={() => playPlaylist(playlist)}
               >
                 <Box sx={{ position: "relative" }}>
                   <CardMedia component="img" height="220" image={playlist.image} alt={playlist.title} />
@@ -680,395 +814,125 @@ const Home = () => {
         </Box>
 
         <Grid container spacing={3}>
-          {/* Davido Card */}
-          <Grid item xs={12} sm={6} md={4}>
-            <Card
-              sx={{
-                bgcolor: "#181818",
-                borderRadius: "12px",
-                overflow: "hidden",
-                transition: "all 0.3s ease",
-                "&:hover": {
-                  transform: "translateY(-8px)",
-                  boxShadow: "0 16px 30px rgba(0,0,0,0.3)",
-                  "& .artistOverlay": {
-                    opacity: 1,
+          {artists.map((artist) => (
+            <Grid item xs={12} sm={6} md={4} key={artist.id}>
+              <Card
+                sx={{
+                  bgcolor: "#181818",
+                  borderRadius: "12px",
+                  overflow: "hidden",
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    transform: "translateY(-8px)",
+                    boxShadow: "0 16px 30px rgba(0,0,0,0.3)",
+                    "& .artistOverlay": {
+                      opacity: 1,
+                    },
+                    "& .artistImage": {
+                      transform: "scale(1.05)",
+                    },
                   },
-                  "& .artistImage": {
-                    transform: "scale(1.05)",
-                  },
-                },
-              }}
-            >
-              <Box sx={{ position: "relative", overflow: "hidden" }}>
-                <CardMedia
-                  component="img"
-                  height="320"
-                  image="https://media.premiumtimesng.com/wp-content/files/2023/07/Davido.png"
-                  alt="Davido"
-                  className="artistImage"
-                  sx={{
-                    transition: "transform 0.5s ease",
-                  }}
-                />
-                <Box
-                  className="artistOverlay"
-                  sx={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    bgcolor: "rgba(0,0,0,0.5)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    opacity: 0,
-                    transition: "opacity 0.3s ease",
-                  }}
-                >
-                  <Button
-                    variant="contained"
-                    startIcon={<PlayArrow />}
+                  cursor: "pointer",
+                }}
+                onClick={() => playArtist(artist)}
+              >
+                <Box sx={{ position: "relative", overflow: "hidden" }}>
+                  <CardMedia
+                    component="img"
+                    height="320"
+                    image={artist.image}
+                    alt={artist.name}
+                    className="artistImage"
                     sx={{
-                      bgcolor: "#1DB954",
-                      borderRadius: "30px",
-                      px: 3,
-                      "&:hover": {
-                        bgcolor: "#18a84a",
-                      },
+                      transition: "transform 0.5s ease",
+                    }}
+                  />
+                  <Box
+                    className="artistOverlay"
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      bgcolor: "rgba(0,0,0,0.5)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      opacity: 0,
+                      transition: "opacity 0.3s ease",
                     }}
                   >
-                    Play
-                  </Button>
+                    <Button
+                      variant="contained"
+                      startIcon={<PlayArrow />}
+                      sx={{
+                        bgcolor: "#1DB954",
+                        borderRadius: "30px",
+                        px: 3,
+                        "&:hover": {
+                          bgcolor: "#18a84a",
+                        },
+                      }}
+                    >
+                      Play
+                    </Button>
+                  </Box>
                 </Box>
-              </Box>
 
-              <CardContent sx={{ position: "relative" }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Box>
-                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: "bold", color: "#fff" }}>
-                      Davido
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.7)" }}>
-                      Nigerian singer & producer
-                    </Typography>
+                <CardContent sx={{ position: "relative" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Box>
+                      <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: "bold", color: "#fff" }}>
+                        {artist.name}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.7)" }}>
+                        {artist.description}
+                      </Typography>
+                    </Box>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        color: "rgba(255,255,255,0.7)",
+                      }}
+                    >
+                      <Favorite sx={{ fontSize: 18, mr: 0.5, color: "#1DB954" }} />
+                      <Typography variant="body2">{artist.followers}</Typography>
+                    </Box>
                   </Box>
 
                   <Box
                     sx={{
                       display: "flex",
-                      alignItems: "center",
-                      color: "rgba(255,255,255,0.7)",
+                      mt: 2,
+                      gap: 1,
+                      flexWrap: "wrap",
                     }}
                   >
-                    <Favorite sx={{ fontSize: 18, mr: 0.5, color: "#1DB954" }} />
-                    <Typography variant="body2">4.2M</Typography>
+                    {artist.genres.map((genre, index) => (
+                      <Chip
+                        key={index}
+                        label={genre}
+                        size="small"
+                        sx={{
+                          bgcolor: "rgba(255,255,255,0.1)",
+                          color: "rgba(255,255,255,0.7)",
+                        }}
+                      />
+                    ))}
                   </Box>
-                </Box>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    mt: 2,
-                    gap: 1,
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <Chip
-                    label="Afrobeats"
-                    size="small"
-                    sx={{
-                      bgcolor: "rgba(255,255,255,0.1)",
-                      color: "rgba(255,255,255,0.7)",
-                    }}
-                  />
-                  <Chip
-                    label="Pop"
-                    size="small"
-                    sx={{
-                      bgcolor: "rgba(255,255,255,0.1)",
-                      color: "rgba(255,255,255,0.7)",
-                    }}
-                  />
-                  <Chip
-                    label="R&B"
-                    size="small"
-                    sx={{
-                      bgcolor: "rgba(255,255,255,0.1)",
-                      color: "rgba(255,255,255,0.7)",
-                    }}
-                  />
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* Wizkid Card */}
-          <Grid item xs={12} sm={6} md={4}>
-            <Card
-              sx={{
-                bgcolor: "#181818",
-                borderRadius: "12px",
-                overflow: "hidden",
-                transition: "all 0.3s ease",
-                "&:hover": {
-                  transform: "translateY(-8px)",
-                  boxShadow: "0 16px 30px rgba(0,0,0,0.3)",
-                  "& .artistOverlay": {
-                    opacity: 1,
-                  },
-                  "& .artistImage": {
-                    transform: "scale(1.05)",
-                  },
-                },
-              }}
-            >
-              <Box sx={{ position: "relative", overflow: "hidden" }}>
-                <CardMedia
-                  component="img"
-                  height="320"
-                  image="https://i.scdn.co/image/ab6761610000e5eb9050b61368975fda051cdc06"
-                  alt="Wizkid"
-                  className="artistImage"
-                  sx={{
-                    transition: "transform 0.5s ease",
-                  }}
-                />
-                <Box
-                  className="artistOverlay"
-                  sx={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    bgcolor: "rgba(0,0,0,0.5)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    opacity: 0,
-                    transition: "opacity 0.3s ease",
-                  }}
-                >
-                  <Button
-                    variant="contained"
-                    startIcon={<PlayArrow />}
-                    sx={{
-                      bgcolor: "#1DB954",
-                      borderRadius: "30px",
-                      px: 3,
-                      "&:hover": {
-                        bgcolor: "#18a84a",
-                      },
-                    }}
-                  >
-                    Play
-                  </Button>
-                </Box>
-              </Box>
-
-              <CardContent sx={{ position: "relative" }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Box>
-                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: "bold", color: "#fff" }}>
-                      Wizkid
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.7)" }}>
-                      Nigerian singer & songwriter
-                    </Typography>
-                  </Box>
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      color: "rgba(255,255,255,0.7)",
-                    }}
-                  >
-                    <Favorite sx={{ fontSize: 18, mr: 0.5, color: "#1DB954" }} />
-                    <Typography variant="body2">5.8M</Typography>
-                  </Box>
-                </Box>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    mt: 2,
-                    gap: 1,
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <Chip
-                    label="Afrobeats"
-                    size="small"
-                    sx={{
-                      bgcolor: "rgba(255,255,255,0.1)",
-                      color: "rgba(255,255,255,0.7)",
-                    }}
-                  />
-                  <Chip
-                    label="Afrofusion"
-                    size="small"
-                    sx={{
-                      bgcolor: "rgba(255,255,255,0.1)",
-                      color: "rgba(255,255,255,0.7)",
-                    }}
-                  />
-                  <Chip
-                    label="R&B"
-                    size="small"
-                    sx={{
-                      bgcolor: "rgba(255,255,255,0.1)",
-                      color: "rgba(255,255,255,0.7)",
-                    }}
-                  />
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* Burna Boy Card */}
-          <Grid item xs={12} sm={6} md={4}>
-            <Card
-              sx={{
-                bgcolor: "#181818",
-                borderRadius: "12px",
-                overflow: "hidden",
-                transition: "all 0.3s ease",
-                "&:hover": {
-                  transform: "translateY(-8px)",
-                  boxShadow: "0 16px 30px rgba(0,0,0,0.3)",
-                  "& .artistOverlay": {
-                    opacity: 1,
-                  },
-                  "& .artistImage": {
-                    transform: "scale(1.05)",
-                  },
-                },
-              }}
-            >
-              <Box sx={{ position: "relative", overflow: "hidden" }}>
-                <CardMedia
-                  component="img"
-                  height="320"
-                  image="https://dailytrust.com/wp-content/uploads/2023/04/Burna-Boy-scaled-1.jpg"
-                  alt="Burna Boy"
-                  className="artistImage"
-                  sx={{
-                    transition: "transform 0.5s ease",
-                  }}
-                />
-                <Box
-                  className="artistOverlay"
-                  sx={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    bgcolor: "rgba(0,0,0,0.5)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    opacity: 0,
-                    transition: "opacity 0.3s ease",
-                  }}
-                >
-                  <Button
-                    variant="contained"
-                    startIcon={<PlayArrow />}
-                    sx={{
-                      bgcolor: "#1DB954",
-                      borderRadius: "30px",
-                      px: 3,
-                      "&:hover": {
-                        bgcolor: "#18a84a",
-                      },
-                    }}
-                  >
-                    Play
-                  </Button>
-                </Box>
-              </Box>
-
-              <CardContent sx={{ position: "relative" }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Box>
-                    <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: "bold", color: "#fff" }}>
-                      Burna Boy
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.7)" }}>
-                      Nigerian singer & performer
-                    </Typography>
-                  </Box>
-
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      color: "rgba(255,255,255,0.7)",
-                    }}
-                  >
-                    <Favorite sx={{ fontSize: 18, mr: 0.5, color: "#1DB954" }} />
-                    <Typography variant="body2">6.1M</Typography>
-                  </Box>
-                </Box>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    mt: 2,
-                    gap: 1,
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <Chip
-                    label="Afrobeats"
-                    size="small"
-                    sx={{
-                      bgcolor: "rgba(255,255,255,0.1)",
-                      color: "rgba(255,255,255,0.7)",
-                    }}
-                  />
-                  <Chip
-                    label="Dancehall"
-                    size="small"
-                    sx={{
-                      bgcolor: "rgba(255,255,255,0.1)",
-                      color: "rgba(255,255,255,0.7)",
-                    }}
-                  />
-                  <Chip
-                    label="Reggae"
-                    size="small"
-                    sx={{
-                      bgcolor: "rgba(255,255,255,0.1)",
-                      color: "rgba(255,255,255,0.7)",
-                    }}
-                  />
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
         </Grid>
       </Container>
 
@@ -1484,6 +1348,66 @@ const Home = () => {
           </Box>
         </Container>
       </Box>
+
+      {/* Custom Audio Player Integration */}
+      {isPlayerVisible && currentTrack && (
+        <Box
+          sx={{
+            position: "fixed",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 1200,
+            bgcolor: "#181818",
+            borderTop: "1px solid rgba(255,255,255,0.1)",
+            p: 2,
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
+              <Box
+                component="img"
+                src={currentTrack.coverArt}
+                alt={currentTrack.title}
+                sx={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: 1,
+                  mr: 2,
+                  objectFit: "cover",
+                }}
+              />
+              <Box>
+                <Typography variant="subtitle1" sx={{ color: "#fff", fontWeight: "bold" }}>
+                  {currentTrack.title}
+                </Typography>
+                <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.7)" }}>
+                  {currentTrack.artist}
+                </Typography>
+              </Box>
+            </Box>
+
+            <Box sx={{ flex: 2 }}>
+              <CustomAudioPlayer
+                audioSrc={currentTrack.audioSrc}
+                title={currentTrack.title}
+                artist={currentTrack.artist}
+                coverArt={currentTrack.coverArt}
+              />
+            </Box>
+
+            <IconButton
+              onClick={closePlayer}
+              sx={{
+                color: "rgba(255,255,255,0.7)",
+                "&:hover": { color: "#fff" },
+              }}
+            >
+              <Close />
+            </IconButton>
+          </Box>
+        </Box>
+      )}
     </Box>
   )
 }
