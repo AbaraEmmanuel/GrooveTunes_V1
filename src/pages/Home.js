@@ -1,124 +1,252 @@
-import Link from "next/link"
-import Image from "next/image"
-import { Music, ListMusic, Play } from "lucide-react"
+import { Container, Box, Typography, Button, Grid, Paper, Card, CardMedia, CardContent } from "@mui/material"
+import { Link } from "react-router-dom"
+import { MusicNote, PlaylistAdd, PlayCircleOutline } from "@mui/icons-material"
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card"
-
-export default function Home() {
+const Home = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted">
-      {/* Hero Section */}
-      <section className="container px-4 py-24 mx-auto text-center md:px-6 lg:py-32">
-        <h1 className="text-4xl font-bold tracking-tight text-emerald-500 md:text-5xl lg:text-6xl animate-fade-in">
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        minHeight="100vh"
+        sx={{ textAlign: "center" }}
+      >
+        <Typography
+          variant="h2"
+          component="h1"
+          gutterBottom
+          sx={{
+            fontWeight: "bold",
+            color: "#1DB954",
+            textShadow: "2px 2px 4px rgba(0, 0, 0, 0.2)",
+            textAlign: "center",
+            mt: 4,
+          }}
+        >
           Welcome to GrooveTunes
-        </h1>
-        <p className="max-w-2xl mx-auto mt-6 text-lg text-muted-foreground md:text-xl">
+        </Typography>
+        <Typography variant="h5" component="p" gutterBottom sx={{ color: "#333", mb: 4 }}>
           Discover, listen, and enjoy your favorite music with our cutting-edge music player.
-        </p>
-        <div className="flex flex-wrap justify-center gap-4 mt-10">
-          <Button asChild size="lg" className="bg-emerald-500 hover:bg-emerald-600">
-            <Link href="/signup">Sign Up</Link>
+        </Typography>
+        <Box mb={4}>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            component={Link}
+            to="/signup"
+            sx={{ marginRight: 2, borderRadius: "8px" }}
+          >
+            Sign Up
           </Button>
           <Button
-            asChild
-            variant="outline"
-            size="lg"
-            className="border-emerald-500 text-emerald-500 hover:bg-emerald-50 hover:text-emerald-600"
+            variant="outlined"
+            color="primary"
+            size="large"
+            component={Link}
+            to="/login"
+            sx={{ borderRadius: "8px" }}
           >
-            <Link href="/login">Log In</Link>
+            Log In
           </Button>
-        </div>
-      </section>
+        </Box>
 
-      {/* Features Section */}
-      <section className="container px-4 py-16 mx-auto md:px-6">
-        <h2 className="mb-12 text-3xl font-bold text-center text-emerald-500 md:text-4xl">Why GrooveTunes?</h2>
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          <Card className="overflow-hidden transition-all duration-300 border-none shadow-lg hover:shadow-xl hover:-translate-y-1">
-            <CardContent className="p-6 text-center">
-              <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-100">
-                <Music className="w-8 h-8 text-emerald-500" />
-              </div>
-              <CardTitle className="mb-2 text-xl">Extensive Music Library</CardTitle>
-              <CardDescription className="text-base">
-                Explore millions of songs from various genres and artists. Your next favorite track is just a click
-                away!
-              </CardDescription>
-            </CardContent>
-          </Card>
+        {/* Why GrooveTunes Section */}
+        <Box sx={{ mt: 6, width: "100%" }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: "bold", color: "#1DB954" }}>
+            Why GrooveTunes?
+          </Typography>
+          <Grid container spacing={4} justifyContent="center">
+            <Grid item xs={12} sm={6} md={4}>
+              <Paper
+                elevation={3}
+                sx={{
+                  padding: 3,
+                  borderRadius: "12px",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  textAlign: "center",
+                  transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                  "&:hover": {
+                    transform: "translateY(-5px)",
+                    boxShadow: "0 10px 20px rgba(0,0,0,0.1)",
+                  },
+                }}
+              >
+                <MusicNote sx={{ fontSize: 60, color: "#1DB954" }} />
+                <Typography variant="h6" sx={{ mt: 2, fontWeight: "bold" }}>
+                  Extensive Music Library
+                </Typography>
+                <Typography variant="body1" sx={{ mt: 1 }}>
+                  Explore millions of songs from various genres and artists. Your next favorite track is just a click
+                  away!
+                </Typography>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <Paper
+                elevation={3}
+                sx={{
+                  padding: 3,
+                  borderRadius: "12px",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  textAlign: "center",
+                  transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                  "&:hover": {
+                    transform: "translateY(-5px)",
+                    boxShadow: "0 10px 20px rgba(0,0,0,0.1)",
+                  },
+                }}
+              >
+                <PlaylistAdd sx={{ fontSize: 60, color: "#1DB954" }} />
+                <Typography variant="h6" sx={{ mt: 2, fontWeight: "bold" }}>
+                  Create Playlists
+                </Typography>
+                <Typography variant="body1" sx={{ mt: 1 }}>
+                  Build and manage your playlists effortlessly. Create the perfect mix for every mood and occasion.
+                </Typography>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <Paper
+                elevation={3}
+                sx={{
+                  padding: 3,
+                  borderRadius: "12px",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  textAlign: "center",
+                  transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                  "&:hover": {
+                    transform: "translateY(-5px)",
+                    boxShadow: "0 10px 20px rgba(0,0,0,0.1)",
+                  },
+                }}
+              >
+                <PlayCircleOutline sx={{ fontSize: 60, color: "#1DB954" }} />
+                <Typography variant="h6" sx={{ mt: 2, fontWeight: "bold" }}>
+                  Seamless Playback
+                </Typography>
+                <Typography variant="body1" sx={{ mt: 1 }}>
+                  Enjoy smooth and uninterrupted playback with our high-quality audio streaming technology.
+                </Typography>
+              </Paper>
+            </Grid>
+          </Grid>
+        </Box>
 
-          <Card className="overflow-hidden transition-all duration-300 border-none shadow-lg hover:shadow-xl hover:-translate-y-1">
-            <CardContent className="p-6 text-center">
-              <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-100">
-                <ListMusic className="w-8 h-8 text-emerald-500" />
-              </div>
-              <CardTitle className="mb-2 text-xl">Create Playlists</CardTitle>
-              <CardDescription className="text-base">
-                Build and manage your playlists effortlessly. Create the perfect mix for every mood and occasion.
-              </CardDescription>
-            </CardContent>
-          </Card>
+        {/* Top Trending Afrobeats Artists Section */}
+        <Box sx={{ mt: 8, width: "100%" }}>
+          <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: "bold", color: "#1DB954" }}>
+            Top Trending Afrobeats Artists
+          </Typography>
+          <Grid container spacing={4} justifyContent="center">
+            {/* Davido Card */}
+            <Grid item xs={12} sm={6} md={4}>
+              <Card
+                sx={{
+                  maxWidth: 345,
+                  borderRadius: "12px",
+                  boxShadow: 3,
+                  transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                  "&:hover": {
+                    transform: "translateY(-5px)",
+                    boxShadow: "0 10px 20px rgba(0,0,0,0.1)",
+                  },
+                }}
+              >
+                <CardMedia
+                  component="img"
+                  height="300"
+                  image="https://media.premiumtimesng.com/wp-content/files/2023/07/Davido.png"
+                  alt="Davido"
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: "bold" }}>
+                    Davido
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Davido is a Nigerian singer, songwriter, and record producer. He blends traditional African elements
+                    with global mainstream pop.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
 
-          <Card className="overflow-hidden transition-all duration-300 border-none shadow-lg hover:shadow-xl hover:-translate-y-1">
-            <CardContent className="p-6 text-center">
-              <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-100">
-                <Play className="w-8 h-8 text-emerald-500" />
-              </div>
-              <CardTitle className="mb-2 text-xl">Seamless Playback</CardTitle>
-              <CardDescription className="text-base">
-                Enjoy smooth and uninterrupted playback with our high-quality audio streaming technology.
-              </CardDescription>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+            {/* Wizkid Card */}
+            <Grid item xs={12} sm={6} md={4}>
+              <Card
+                sx={{
+                  maxWidth: 345,
+                  borderRadius: "12px",
+                  boxShadow: 3,
+                  transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                  "&:hover": {
+                    transform: "translateY(-5px)",
+                    boxShadow: "0 10px 20px rgba(0,0,0,0.1)",
+                  },
+                }}
+              >
+                <CardMedia
+                  component="img"
+                  height="300"
+                  image="https://i.scdn.co/image/ab6761610000e5eb9050b61368975fda051cdc06"
+                  alt="Wizkid"
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: "bold" }}>
+                    Wizkid
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Wizkid is a Nigerian singer and songwriter. One of Africa's biggest artists, he is the most
+                    decorated Nigerian artist ever.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
 
-      {/* Artists Section */}
-      <section className="container px-4 py-16 mx-auto md:px-6">
-        <h2 className="mb-12 text-3xl font-bold text-center text-emerald-500 md:text-4xl">
-          Top Trending Afrobeats Artists
-        </h2>
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          <ArtistCard
-            name="Davido"
-            image="https://media.premiumtimesng.com/wp-content/files/2023/07/Davido.png"
-            description="Davido is a Nigerian singer, songwriter, and record producer. He blends traditional African elements with global mainstream pop."
-          />
-
-          <ArtistCard
-            name="Wizkid"
-            image="https://i.scdn.co/image/ab6761610000e5eb9050b61368975fda051cdc06"
-            description="Wizkid is a Nigerian singer and songwriter. One of Africa's biggest artists, he is the most decorated Nigerian artist ever."
-          />
-
-          <ArtistCard
-            name="Burna Boy"
-            image="https://dailytrust.com/wp-content/uploads/2023/04/Burna-Boy-scaled-1.jpg"
-            description="Burna Boy is a Nigerian singer, songwriter, and performer. He is known for his fusion of Afrobeat, dancehall, and reggae music."
-          />
-        </div>
-      </section>
-    </div>
+            {/* Burna Boy Card */}
+            <Grid item xs={12} sm={6} md={4}>
+              <Card
+                sx={{
+                  maxWidth: 345,
+                  borderRadius: "12px",
+                  boxShadow: 3,
+                  transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                  "&:hover": {
+                    transform: "translateY(-5px)",
+                    boxShadow: "0 10px 20px rgba(0,0,0,0.1)",
+                  },
+                }}
+              >
+                <CardMedia
+                  component="img"
+                  height="300"
+                  image="https://dailytrust.com/wp-content/uploads/2023/04/Burna-Boy-scaled-1.jpg"
+                  alt="Burna Boy"
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div" sx={{ fontWeight: "bold" }}>
+                    Burna Boy
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Burna Boy is a Nigerian singer, songwriter, and performer. He is known for his fusion of Afrobeat,
+                    dancehall, and reggae music.
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </Box>
+      </Box>
+    </Container>
   )
 }
 
-function ArtistCard({ name, image, description }) {
-  return (
-    <Card className="overflow-hidden transition-all duration-300 border-none shadow-lg hover:shadow-xl hover:-translate-y-1">
-      <div className="relative h-80 w-full">
-        <Image
-          src={image || "/placeholder.svg"}
-          alt={name}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
-      </div>
-      <CardContent className="p-6">
-        <CardTitle className="mb-2 text-xl">{name}</CardTitle>
-        <CardDescription className="text-base">{description}</CardDescription>
-      </CardContent>
-    </Card>
-  )
-}
+export default Home
