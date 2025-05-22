@@ -30,9 +30,8 @@ import {
   Equalizer,
   Explore,
   TrendingUp,
-  Close,
 } from "@mui/icons-material"
-import CustomAudioPlayer from "../components/CustomAudioPlayer" // Correct import path
+import SpotifyPlayer from "../components/SpotifyPlayer" // Updated import
 
 const Home = () => {
   const theme = useTheme()
@@ -40,14 +39,13 @@ const Home = () => {
   const isMedium = useMediaQuery(theme.breakpoints.down("md"))
 
   // State for the currently playing track and playlist
-  const [currentSong, setCurrentSong] = useState("")
+  const [currentSpotifyLink, setCurrentSpotifyLink] = useState("")
   const [songInfo, setSongInfo] = useState(null)
   const [isPlayerVisible, setIsPlayerVisible] = useState(false)
   const [likedArtists, setLikedArtists] = useState({})
   const [currentPlaylist, setCurrentPlaylist] = useState(null)
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(0)
 
-  // Featured playlists data with audio tracks
+  // Featured playlists data with Spotify links
   const featuredPlaylists = [
     {
       id: 1,
@@ -55,22 +53,8 @@ const Home = () => {
       image: "https://i.scdn.co/image/ab67706f00000003b70e0223f544b1faa2e95ed0",
       songs: 42,
       followers: "2.3M",
-      tracks: [
-        {
-          id: "track1",
-          title: "Last Last",
-          artist: "Burna Boy",
-          audioSrc: "/audio/last-last.mp3", // Replace with your actual audio path
-          albumArt: "https://i.scdn.co/image/ab67616d0000b273c5649add07ed3720be9d5526",
-        },
-        {
-          id: "track2",
-          title: "Rush",
-          artist: "Ayra Starr",
-          audioSrc: "/audio/rush.mp3", // Replace with your actual audio path
-          albumArt: "https://i.scdn.co/image/ab67616d0000b273a7a0f0cc9f9e1f6a2d512e9b",
-        },
-      ],
+      spotifyLink: "https://open.spotify.com/playlist/37i9dQZF1DWYs83FtTMQFw",
+      description: "The essential tracks from the Afrobeats scene. Cover: Burna Boy",
     },
     {
       id: 2,
@@ -78,22 +62,8 @@ const Home = () => {
       image: "https://i.scdn.co/image/ab67706f00000003e8e28219724c2423afa4d320",
       songs: 35,
       followers: "1.8M",
-      tracks: [
-        {
-          id: "track3",
-          title: "Calm Down",
-          artist: "Rema",
-          audioSrc: "/audio/calm-down.mp3", // Replace with your actual audio path
-          albumArt: "https://i.scdn.co/image/ab67616d0000b273f29d0c86f34e5d062a5c41e3",
-        },
-        {
-          id: "track4",
-          title: "Essence",
-          artist: "Wizkid ft. Tems",
-          audioSrc: "/audio/essence.mp3", // Replace with your actual audio path
-          albumArt: "https://i.scdn.co/image/ab67616d0000b273c5e2f328b0efb49b09bd22fd",
-        },
-      ],
+      spotifyLink: "https://open.spotify.com/playlist/37i9dQZF1DX889U0CL85jj",
+      description: "Chill R&B and alternative vibes for relaxation and good times.",
     },
     {
       id: 3,
@@ -101,26 +71,12 @@ const Home = () => {
       image: "https://i.scdn.co/image/ab67706f000000034d26d431869cabfc53c67d8e",
       songs: 50,
       followers: "3.1M",
-      tracks: [
-        {
-          id: "track5",
-          title: "Sungba (Remix)",
-          artist: "Asake ft. Burna Boy",
-          audioSrc: "/audio/sungba.mp3", // Replace with your actual audio path
-          albumArt: "https://i.scdn.co/image/ab67616d0000b273b5a0c2f8da6f6e7f3ebd8336",
-        },
-        {
-          id: "track6",
-          title: "Peru",
-          artist: "Fireboy DML",
-          audioSrc: "/audio/peru.mp3", // Replace with your actual audio path
-          albumArt: "https://i.scdn.co/image/ab67616d0000b273b1a52f9ab4c7c9f49ba8379a",
-        },
-      ],
+      spotifyLink: "https://open.spotify.com/playlist/37i9dQZF1DX76Wlfdnj7AP",
+      description: "Up-tempo tracks to power your workout and keep you motivated.",
     },
   ]
 
-  // Artist data with tracks
+  // Artist data with Spotify links
   const artists = [
     {
       id: 1,
@@ -129,22 +85,7 @@ const Home = () => {
       description: "Nigerian singer & producer",
       followers: "4.2M",
       genres: ["Afrobeats", "Pop", "R&B"],
-      tracks: [
-        {
-          id: "track7",
-          title: "Unavailable",
-          artist: "Davido ft. Musa Keys",
-          audioSrc: "/audio/unavailable.mp3", // Replace with your actual audio path
-          albumArt: "https://i.scdn.co/image/ab67616d0000b273c5e2f328b0efb49b09bd22fd",
-        },
-        {
-          id: "track8",
-          title: "Fall",
-          artist: "Davido",
-          audioSrc: "/audio/fall.mp3", // Replace with your actual audio path
-          albumArt: "https://i.scdn.co/image/ab67616d0000b273a1d9f55a95d612c7e5db5ab9",
-        },
-      ],
+      spotifyLink: "https://open.spotify.com/artist/0Y3agQaa6g2r0YmHPOO9rh",
     },
     {
       id: 2,
@@ -153,22 +94,7 @@ const Home = () => {
       description: "Nigerian singer & songwriter",
       followers: "5.8M",
       genres: ["Afrobeats", "Afrofusion", "R&B"],
-      tracks: [
-        {
-          id: "track9",
-          title: "Essence",
-          artist: "Wizkid ft. Tems",
-          audioSrc: "/audio/essence.mp3", // Replace with your actual audio path
-          albumArt: "https://i.scdn.co/image/ab67616d0000b273c5e2f328b0efb49b09bd22fd",
-        },
-        {
-          id: "track10",
-          title: "Joro",
-          artist: "Wizkid",
-          audioSrc: "/audio/joro.mp3", // Replace with your actual audio path
-          albumArt: "https://i.scdn.co/image/ab67616d0000b273c5e2f328b0efb49b09bd22fd",
-        },
-      ],
+      spotifyLink: "https://open.spotify.com/artist/3tVQdUvClmAT7URs9V3rsp",
     },
     {
       id: 3,
@@ -177,22 +103,7 @@ const Home = () => {
       description: "Nigerian singer & performer",
       followers: "6.1M",
       genres: ["Afrobeats", "Dancehall", "Reggae"],
-      tracks: [
-        {
-          id: "track11",
-          title: "Last Last",
-          artist: "Burna Boy",
-          audioSrc: "/audio/last-last.mp3", // Replace with your actual audio path
-          albumArt: "https://i.scdn.co/image/ab67616d0000b273c5649add07ed3720be9d5526",
-        },
-        {
-          id: "track12",
-          title: "On The Low",
-          artist: "Burna Boy",
-          audioSrc: "/audio/on-the-low.mp3", // Replace with your actual audio path
-          albumArt: "https://i.scdn.co/image/ab67616d0000b273c5649add07ed3720be9d5526",
-        },
-      ],
+      spotifyLink: "https://open.spotify.com/artist/3wcj11K77LjEY1PkEazffa",
     },
   ]
 
@@ -205,85 +116,52 @@ const Home = () => {
     }))
   }
 
-  // Function to play a track from a playlist
+  // Function to play a playlist
   const playPlaylist = (playlist) => {
-    if (playlist.tracks && playlist.tracks.length > 0) {
-      setCurrentPlaylist(playlist)
-      setCurrentTrackIndex(0)
-      const track = playlist.tracks[0]
-      setCurrentSong(track.audioSrc)
-      setSongInfo({
-        title: track.title,
-        artist: track.artist,
-        albumArt: track.albumArt,
-      })
-      setIsPlayerVisible(true)
-    }
+    console.log("Playing playlist:", playlist.title, "with Spotify link:", playlist.spotifyLink)
+
+    setCurrentSpotifyLink(playlist.spotifyLink)
+    setSongInfo({
+      title: playlist.title,
+      artist: playlist.description,
+      albumArt: playlist.image,
+    })
+    setIsPlayerVisible(true)
+    setCurrentPlaylist(playlist)
   }
 
-  // Function to play a track from an artist
+  // Function to play an artist
   const playArtist = (artist) => {
-    if (artist.tracks && artist.tracks.length > 0) {
-      setCurrentPlaylist({ tracks: artist.tracks })
-      setCurrentTrackIndex(0)
-      const track = artist.tracks[0]
-      setCurrentSong(track.audioSrc)
-      setSongInfo({
-        title: track.title,
-        artist: track.artist,
-        albumArt: track.albumArt,
-      })
-      setIsPlayerVisible(true)
-    }
+    console.log("Playing artist:", artist.name, "with Spotify link:", artist.spotifyLink)
+
+    setCurrentSpotifyLink(artist.spotifyLink)
+    setSongInfo({
+      title: artist.name,
+      artist: artist.description,
+      albumArt: artist.image,
+    })
+    setIsPlayerVisible(true)
   }
 
   // Function to close the player
   const closePlayer = () => {
     setIsPlayerVisible(false)
-    setCurrentSong("")
+    setCurrentSpotifyLink("")
     setSongInfo(null)
     setCurrentPlaylist(null)
   }
 
-  // Function to handle song end
-  const handleSongEnd = () => {
-    if (currentPlaylist && currentPlaylist.tracks.length > currentTrackIndex + 1) {
-      // Play next song in playlist
-      handleNextSong()
-    } else {
-      // End of playlist
-      setIsPlayerVisible(false)
+  // For testing - play a sample Spotify playlist
+  const playTestSpotify = () => {
+    // Use a popular Spotify playlist
+    const testPlaylist = {
+      title: "Today's Top Hits",
+      description: "Spotify's most popular playlist",
+      image: "https://i.scdn.co/image/ab67706f00000003c03f6a4c30d5178f973e3f0c",
+      spotifyLink: "https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M",
     }
-  }
 
-  // Function to handle next song
-  const handleNextSong = () => {
-    if (currentPlaylist && currentPlaylist.tracks.length > currentTrackIndex + 1) {
-      const nextIndex = currentTrackIndex + 1
-      setCurrentTrackIndex(nextIndex)
-      const track = currentPlaylist.tracks[nextIndex]
-      setCurrentSong(track.audioSrc)
-      setSongInfo({
-        title: track.title,
-        artist: track.artist,
-        albumArt: track.albumArt,
-      })
-    }
-  }
-
-  // Function to handle previous song
-  const handlePreviousSong = () => {
-    if (currentPlaylist && currentTrackIndex > 0) {
-      const prevIndex = currentTrackIndex - 1
-      setCurrentTrackIndex(prevIndex)
-      const track = currentPlaylist.tracks[prevIndex]
-      setCurrentSong(track.audioSrc)
-      setSongInfo({
-        title: track.title,
-        artist: track.artist,
-        albumArt: track.albumArt,
-      })
-    }
+    playPlaylist(testPlaylist)
   }
 
   return (
@@ -342,8 +220,9 @@ const Home = () => {
                 mx: 1,
                 "&:hover": { color: "#1DB954" },
               }}
+              onClick={playTestSpotify} // Test Spotify button
             >
-              Radio
+              Test Spotify
             </Button>
           </Box>
 
@@ -379,6 +258,7 @@ const Home = () => {
           display: "flex",
           alignItems: "center",
           overflow: "hidden",
+          mb: isPlayerVisible ? "120px" : 0, // Add margin at bottom if player is visible
         }}
       >
         {/* Background Image with Overlay */}
@@ -461,8 +341,7 @@ const Home = () => {
                 variant="contained"
                 size="large"
                 startIcon={<PlayArrow />}
-                component={Link}
-                to="/signup"
+                onClick={playTestSpotify} // Test Spotify button
                 sx={{
                   bgcolor: "#1DB954",
                   borderRadius: "30px",
@@ -477,7 +356,7 @@ const Home = () => {
                   },
                 }}
               >
-                Start Listening Free
+                Play Top Hits
               </Button>
 
               <Button
@@ -698,6 +577,10 @@ const Home = () => {
                 <CardContent>
                   <Typography variant="h6" component="div" sx={{ fontWeight: "bold", color: "#fff" }}>
                     {playlist.title}
+                  </Typography>
+
+                  <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.7)", mb: 1 }}>
+                    {playlist.description}
                   </Typography>
 
                   <Box
@@ -1449,66 +1332,15 @@ const Home = () => {
         </Container>
       </Box>
 
-      {/* Custom Audio Player Integration */}
-      {isPlayerVisible && currentSong && songInfo && (
-        <Box
-          sx={{
-            position: "fixed",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            zIndex: 1200,
-            bgcolor: "#181818",
-            borderTop: "1px solid rgba(255,255,255,0.1)",
-            p: 2,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
-            <Box
-              component="img"
-              src={songInfo.albumArt}
-              alt={songInfo.title}
-              sx={{
-                width: 56,
-                height: 56,
-                borderRadius: 1,
-                mr: 2,
-                objectFit: "cover",
-              }}
-            />
-            <Box>
-              <Typography variant="subtitle1" sx={{ color: "#fff", fontWeight: "bold" }}>
-                {songInfo.title}
-              </Typography>
-              <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.7)" }}>
-                {songInfo.artist}
-              </Typography>
-            </Box>
-          </Box>
-
-          <Box sx={{ flex: 2, mx: 2 }}>
-            <CustomAudioPlayer
-              currentSong={currentSong}
-              songInfo={songInfo}
-              onSongEnd={handleSongEnd}
-              onNext={handleNextSong}
-              onPrevious={handlePreviousSong}
-            />
-          </Box>
-
-          <IconButton
-            onClick={closePlayer}
-            sx={{
-              color: "rgba(255,255,255,0.7)",
-              "&:hover": { color: "#fff" },
-            }}
-          >
-            <Close />
-          </IconButton>
-        </Box>
+      {/* Spotify Player Integration */}
+      {isPlayerVisible && currentSpotifyLink && songInfo && (
+        <SpotifyPlayer
+          spotifyLink={currentSpotifyLink}
+          title={songInfo.title}
+          artist={songInfo.artist}
+          coverArt={songInfo.albumArt}
+          onClose={closePlayer}
+        />
       )}
     </Box>
   )
