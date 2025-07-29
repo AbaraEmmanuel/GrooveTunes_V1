@@ -1,8 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Grid, Card, CardContent, Box, AppBar, Toolbar, Button, Snackbar } from '@mui/material';
-import Alert from '@mui/material/Alert';
-import { Link } from 'react-router-dom';
-import CustomAudioPlayer from './CustomAudioPlayer';
+import { 
+  Container, 
+  Typography, 
+  Grid, 
+  Card, 
+  CardContent, 
+  Box, 
+  AppBar, 
+  Toolbar, 
+  Button, 
+  Snackbar,
+  Alert, // Added this import
+  IconButton,
+  useTheme,
+  useMediaQuery,
+  Avatar,
+  Badge,
+  CircularProgress
+} from '@mui/material';
+import { 
+  PlayArrow, 
+  Pause, 
+  SkipNext, 
+  SkipPrevious, 
+  Search, 
+  QueueMusic, 
+  Logout,
+  Home,
+  AccountCircle
+} from '@mui/icons-material';
+import { Link, useNavigate } from 'react-router-dom';
 import { fetchPopularTracks } from '../services/spotifyApi';
 import { useAuth } from '../context/AuthContext';
 
@@ -12,12 +39,16 @@ const HomePage = () => {
   const [currentSongInfo, setCurrentSongInfo] = useState(null);
   const [playingSongId, setPlayingSongId] = useState(null);
   const [currentSongIndex, setCurrentSongIndex] = useState(null);
-  const { logout } = useAuth();
+  const [isPlaying, setIsPlaying] = useState(false);
+  const { logout, currentUser } = useAuth();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const navigate = useNavigate();
 
-  // Snackbar state for user feedback
+  // Snackbar state
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('success'); // success, error, etc.
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
   useEffect(() => {
     const fetchHomepageTracks = async () => {
@@ -27,9 +58,15 @@ const HomePage = () => {
           setSongs(fetchedSongs);
         } else {
           console.error('Fetched songs data is not an array');
+          setSnackbarMessage('Error loading songs');
+          setSnackbarSeverity('error');
+          setSnackbarOpen(true);
         }
       } catch (error) {
         console.error('Error fetching songs:', error);
+        setSnackbarMessage('Error loading songs');
+        setSnackbarSeverity('error');
+        setSnackbarOpen(true);
       }
     };
     fetchHomepageTracks();
@@ -40,23 +77,50 @@ const HomePage = () => {
     setCurrentSongInfo(songInfo);
     setPlayingSongId(songInfo.id);
     setCurrentSongIndex(index);
+    setIsPlaying(true);
   };
 
-  const handleCardClick = (song, index) => {
-    playSong(song.preview_url, { name: song.name, albumArt: song.albumArt }, index);
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying);
   };
+
+const handleCardClick = (song, index) => {
+  if (!song.preview_url) {
+    setSnackbarMessage('Preview unavailable for this track');
+    setSnackbarSeverity('warning');
+    setSnackbarOpen(true);
+    return;
+  }
+
+  playSong(song.preview_url, {
+    name: song.name,
+    albumArt: song.albumArt,
+    artists: song.artists,
+    id: song.id
+  }, index);
+};
 
   const handleNextSong = () => {
     if (currentSongIndex !== null && currentSongIndex < songs.length - 1) {
       const nextSong = songs[currentSongIndex + 1];
-      playSong(nextSong.preview_url, { name: nextSong.name, albumArt: nextSong.albumArt }, currentSongIndex + 1);
+      playSong(nextSong.preview_url, { 
+        name: nextSong.name, 
+        albumArt: nextSong.albumArt,
+        artists: nextSong.artists,
+        id: nextSong.id
+      }, currentSongIndex + 1);
     }
   };
 
   const handlePreviousSong = () => {
     if (currentSongIndex !== null && currentSongIndex > 0) {
       const prevSong = songs[currentSongIndex - 1];
-      playSong(prevSong.preview_url, { name: prevSong.name, albumArt: prevSong.albumArt }, currentSongIndex - 1);
+      playSong(prevSong.preview_url, { 
+        name: prevSong.name, 
+        albumArt: prevSong.albumArt,
+        artists: prevSong.artists,
+        id: prevSong.id
+      }, currentSongIndex - 1);
     }
   };
 
@@ -65,106 +129,393 @@ const HomePage = () => {
   };
 
   return (
-    <>
-      <AppBar position="static" sx={{ backgroundColor: '#1DB954' }}>
+    <Box sx={{ 
+      minHeight: '100vh',
+      background: 'linear-gradient(to bottom, #f5f5f5, #ffffff)'
+    }}>
+      {/* App Bar */}
+      <AppBar position="sticky" sx={{ 
+        backgroundColor: '#121212',
+        backgroundImage: 'linear-gradient(rgba(29, 185, 84, 0.2), rgba(29, 185, 84, 0))',
+        boxShadow: 'none',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+      }}>
         <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
-            GrooveTunes
-          </Typography>
-          <Box>
-            <Button color="inherit" component={Link} to="/playlist">Playlist</Button>
-            <Button color="inherit" component={Link} to="/search">Search</Button>
-            <Button color="inherit" onClick={() => logout()} sx={{ marginLeft: 5 }}>
-              Logout
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            flexGrow: 1 
+          }}>
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontWeight: 'bold',
+                background: 'linear-gradient(to right, #1DB954, #1ED760)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                fontSize: isMobile ? '1.25rem' : '1.5rem'
+              }}
+            >
+              GrooveTunes
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton 
+              color="inherit" 
+              component={Link} 
+              to="/" 
+              sx={{ 
+                mr: isMobile ? 0 : 2,
+                color: '#1DB954'
+              }}
+            >
+              <Home />
+            </IconButton>
+            <IconButton 
+              color="inherit" 
+              component={Link} 
+              to="/playlist" 
+              sx={{ 
+                mr: isMobile ? 0 : 2,
+                color: '#ffffff'
+              }}
+            >
+              <QueueMusic />
+            </IconButton>
+            <IconButton 
+              color="inherit" 
+              component={Link} 
+              to="/search" 
+              sx={{ 
+                mr: isMobile ? 0 : 2,
+                color: '#ffffff'
+              }}
+            >
+              <Search />
+            </IconButton>
+            <IconButton 
+              color="inherit" 
+              onClick={() => navigate('/profile')}
+              sx={{ 
+                mr: isMobile ? 0 : 2,
+                color: '#ffffff'
+              }}
+            >
+              <AccountCircle />
+            </IconButton>
+            <Button 
+              variant="outlined" 
+              color="inherit" 
+              onClick={() => logout()}
+              startIcon={<Logout />}
+              sx={{ 
+                ml: 2,
+                color: '#ffffff',
+                borderColor: 'rgba(255, 255, 255, 0.3)',
+                '&:hover': {
+                  borderColor: '#ffffff',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                }
+              }}
+            >
+              {!isMobile && 'Logout'}
             </Button>
           </Box>
         </Toolbar>
       </AppBar>
 
-      <Container sx={{ mt: 4 }}>
-        <Typography variant="h4" gutterBottom align="center" sx={{ fontWeight: 'bold', color: '#1DB954' }}>
-          Discover Popular Songs
-        </Typography>
-        <Typography variant="h6" align="center" sx={{ mb: 4 }}>
-          Explore the latest popular tracks and click on a song to play it.
-        </Typography>
-        <Grid container spacing={4}>
-          {songs.length > 0 ? (
-            songs.map((song, index) => (
+      {/* Main Content */}
+      <Container maxWidth="xl" sx={{ 
+        pt: 4,
+        pb: currentSong ? '120px' : 4,
+        minHeight: 'calc(100vh - 64px)'
+      }}>
+        <Box sx={{ textAlign: 'center', mb: 6 }}>
+          <Typography 
+            variant={isMobile ? "h4" : "h3"} 
+            gutterBottom 
+            sx={{ 
+              fontWeight: 'bold',
+              color: '#1DB954',
+              mb: 2
+            }}
+          >
+            Discover Popular Songs
+          </Typography>
+          <Typography 
+            variant={isMobile ? "h6" : "h5"} 
+            sx={{ 
+              mb: 4,
+              color: 'text.secondary',
+              maxWidth: '800px',
+              mx: 'auto'
+            }}
+          >
+            Explore the latest trending tracks from around the world
+          </Typography>
+        </Box>
+
+        {songs.length > 0 ? (
+          <Grid container spacing={isMobile ? 2 : 4}>
+            {songs.map((song, index) => (
               <Grid item xs={12} sm={6} md={4} lg={3} key={song.id}>
                 <Card 
                   sx={{ 
                     borderRadius: '16px', 
                     overflow: 'hidden', 
-                    position: 'relative', 
-                    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.2)', 
-                    transition: 'transform 0.3s, box-shadow 0.3s', 
+                    position: 'relative',
+                    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)',
+                    transition: 'transform 0.3s, box-shadow 0.3s',
                     '&:hover': { 
-                      transform: 'scale(1.03)', 
-                      boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)', 
-                      cursor: 'pointer'
-                    } 
+                      transform: 'translateY(-8px)',
+                      boxShadow: '0 16px 32px rgba(0, 0, 0, 0.2)',
+                      cursor: 'pointer',
+                      '& .play-button': {
+                        opacity: 1,
+                        transform: 'translateY(0)'
+                      }
+                    }
                   }}
                   onClick={() => handleCardClick(song, index)}
                 >
-                  <CardContent 
-                    sx={{ 
-                      display: 'flex', 
-                      flexDirection: 'column', 
-                      alignItems: 'center', 
-                      textAlign: 'center', 
-                      zIndex: 2 
-                    }}
-                  >
+                  <Box sx={{ position: 'relative' }}>
                     <img 
                       src={song.albumArt || 'default-image-url'} 
                       alt={song.name} 
                       style={{ 
                         width: '100%', 
-                        height: 'auto', 
-                        borderRadius: '12px',
-                        marginBottom: '15px',
+                        height: isMobile ? '180px' : '240px',
                         objectFit: 'cover',
-                        maxHeight: '200px',
+                        display: 'block'
                       }} 
                     />
-                    <Typography gutterBottom variant="h6" component="div" sx={{ fontWeight: 'bold', color: '#333' }}>
+                    <Box 
+                      className="play-button"
+                      sx={{
+                        position: 'absolute',
+                        bottom: 16,
+                        right: 16,
+                        width: 48,
+                        height: 48,
+                        borderRadius: '50%',
+                        backgroundColor: '#1DB954',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        opacity: playingSongId === song.id ? 1 : 0,
+                        transform: playingSongId === song.id ? 'translateY(0)' : 'translateY(8px)',
+                        transition: 'all 0.3s ease',
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+                        '&:hover': {
+                          backgroundColor: '#1ED760',
+                          transform: 'scale(1.1)'
+                        },
+                        backgroundColor: song.hasPreview ? '#1DB954' : '#999',
+                        cursor: song.hasPreview ? 'pointer' : 'not-allowed',
+                        '&:hover': {
+                          backgroundColor: song.hasPreview ? '#1ED760' : '#999',
+                          transform: song.hasPreview ? 'scale(1.1)' : 'none',
+                        }
+                      }}
+                    >
+                      {song.hasPreview ? (
+                        playingSongId === song.id && isPlaying ? (
+                          <Pause sx={{ color: '#fff' }} />
+                        ) : (
+                          <PlayArrow sx={{ color: '#fff' }} />
+                        )
+                      ) : (
+                        <PlayArrow sx={{ color: '#ccc' }} />
+                      )}
+                    </Box>
+                  </Box>
+                  <CardContent sx={{ 
+                    backgroundColor: 'background.paper',
+                    borderTop: '1px solid rgba(0, 0, 0, 0.1)'
+                  }}>
+                    <Typography 
+                      gutterBottom 
+                      variant="h6" 
+                      component="div" 
+                      sx={{ 
+                        fontWeight: 'bold',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}
+                    >
                       {song.name}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary">
+                    <Typography 
+                      variant="body2" 
+                      color="text.secondary"
+                      sx={{
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}
+                    >
                       {Array.isArray(song.artists) ? song.artists.map((artist) => artist.name).join(', ') : song.artists}
                     </Typography>
                   </CardContent>
                 </Card>
               </Grid>
-            ))
-          ) : (
-            <Typography variant="h6" align="center">Loading...</Typography>
-          )}
-        </Grid>
-        {currentSong && (
-          <Box sx={{ position: 'fixed', bottom: 20, left: 0, right: 0, zIndex: 1300 }}>
-            <CustomAudioPlayer
-              currentSong={currentSong}
-              songInfo={currentSongInfo}
-              onNext={handleNextSong}
-              onPrevious={handlePreviousSong}
-            />
+            ))}
+          </Grid>
+        ) : (
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: '50vh'
+          }}>
+            <CircularProgress sx={{ color: '#1DB954' }} />
           </Box>
         )}
       </Container>
+
+      {/* Player Bar */}
+      {currentSong && (
+        <Box sx={{ 
+          position: 'fixed', 
+          bottom: 0, 
+          left: 0, 
+          right: 0, 
+          height: '80px',
+          backgroundColor: '#181818',
+          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+          zIndex: 1300,
+          display: 'flex',
+          alignItems: 'center',
+          px: 2,
+          boxShadow: '0 -4px 12px rgba(0, 0, 0, 0.3)'
+        }}>
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            width: '100%',
+            maxWidth: '1400px',
+            mx: 'auto'
+          }}>
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              width: '30%',
+              minWidth: '200px'
+            }}>
+              <img 
+                src={currentSongInfo?.albumArt || 'default-image-url'} 
+                alt={currentSongInfo?.name} 
+                style={{ 
+                  width: '56px', 
+                  height: '56px',
+                  borderRadius: '4px',
+                  objectFit: 'cover',
+                  marginRight: '16px'
+                }} 
+              />
+              <Box>
+                <Typography 
+                  variant="body1" 
+                  sx={{ 
+                    fontWeight: 'bold',
+                    color: '#ffffff',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    maxWidth: '200px'
+                  }}
+                >
+                  {currentSongInfo?.name}
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    maxWidth: '200px'
+                  }}
+                >
+                  {currentSongInfo?.artists}
+                </Typography>
+              </Box>
+            </Box>
+
+            <Box sx={{ 
+              flex: 1, 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center',
+              px: 2
+            }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <IconButton 
+                  onClick={handlePreviousSong}
+                  disabled={currentSongIndex === 0}
+                  sx={{ 
+                    color: '#ffffff',
+                    '&:hover': {
+                      color: '#1DB954'
+                    }
+                  }}
+                >
+                  <SkipPrevious />
+                </IconButton>
+                <IconButton 
+                  onClick={togglePlayPause}
+                  sx={{ 
+                    backgroundColor: '#1DB954',
+                    color: '#ffffff',
+                    mx: 2,
+                    '&:hover': {
+                      backgroundColor: '#1ED760',
+                      transform: 'scale(1.1)'
+                    }
+                  }}
+                >
+                  {isPlaying ? <Pause /> : <PlayArrow />}
+                </IconButton>
+                <IconButton 
+                  onClick={handleNextSong}
+                  disabled={currentSongIndex === songs.length - 1}
+                  sx={{ 
+                    color: '#ffffff',
+                    '&:hover': {
+                      color: '#1DB954'
+                    }
+                  }}
+                >
+                  <SkipNext />
+                </IconButton>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+      )}
 
       {/* Snackbar for user feedback */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity}>
+        <Alert 
+          onClose={handleSnackbarClose} 
+          severity={snackbarSeverity}
+          sx={{ 
+            width: '100%',
+            borderRadius: '12px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+          }}
+        >
           {snackbarMessage}
         </Alert>
       </Snackbar>
-    </>
+    </Box>
   );
 };
 

@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import PasswordReset from './pages/PasswordReset';
+import Profile from './components/Profile';
 import Playlist from './components/Playlist';
 import ArtistSearch from './components/ArtistSearch';
 import HomePage from './components/HomePage';
@@ -30,6 +31,10 @@ function App() {
           <Route
             path="/homepage"
             element={<PrivateRoute element={<HomePage />} />} 
+          />
+          <Route
+            path="/profile"
+            element={<PrivateRoute element={<Profile />} />}
           />
         </Routes>
       </AuthProvider>

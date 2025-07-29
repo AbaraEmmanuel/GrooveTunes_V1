@@ -1,3 +1,4 @@
+import { hasFormSubmit } from '@testing-library/user-event/dist/utils';
 import axios from 'axios';
 
 const clientId = 'dfecf71217a549eea9c3e130bd92ca75';
@@ -28,7 +29,8 @@ async function fetchWebApi(endpoint, method, body) {
     await getAccessToken();
   }
 
-  const res = await fetch(`https://api.spotify.com/${endpoint}`, {
+  // const res = await fetch(`https://api.spotify.com/${endpoint}`, {
+  const res = await fetch(`https://api.spotify.com/${endpoint.startsWith('v1/') ? '' : 'v1/'}${endpoint}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -46,6 +48,8 @@ async function searchArtists(artistQuery) {
   );
 }
 
+
+
 async function searchSongs(songQuery) {
   return fetchWebApi(
     `v1/search?q=${encodeURIComponent(songQuery)}&type=track&limit=50`,
@@ -53,53 +57,66 @@ async function searchSongs(songQuery) {
   );
 }
 
-// Fetch popular tracks for the homepage
+const playlistIds = [
+  '4q00AtmbG4XZaNOFKkDjrg',
+  '3ymQqPtFEu1bn0ZEJD5oIu',
+  '37i9dQZF1EIXlU4rYVqFMQ',
+  '1YKhA3kvAy1Lz16e9GTeUh',
+  '37i9dQZF1DZ06evO22OCjn',
+];
+
 async function fetchPopularTracks() {
   try {
-    const playlistId = '15GDExq4ZYGZSq6ujLllc1'; // Playlist ID for top tracks in Nigeria
-    const response = await fetchWebApi(`v1/playlists/${playlistId}/tracks?limit=100`, 'GET');
-    
-    if (!response || !response.items) {
-      throw new Error('Invalid response structure');
-    }
-    
-    // Extract tracks from the response
-    const tracks = response.items.map(item => item.track);
+    const allTracks = [];
 
-    return tracks.map(track => {
-      const album = track.album || {}; // Default to empty object if album is undefined
-      const images = album.images || []; // Default to empty array if images is undefined
-      
-      return {
-        id: track.id,
-        name: track.name,
-        preview_url: track.preview_url,
-        albumArt: images[0]?.url || 'https://example.com/default-image.jpg', // Provide a default image URL
-        artists: track.artists.map(artist => artist.name).join(', '),
-      };
-    });
+    for (const playlistId of playlistIds) {
+      const response = await fetchWebApi(`v1/playlists/${playlistId}/tracks?limit=100`, 'GET');
+
+      if (!response || !response.items) continue;
+
+      const tracks = response.items
+        .map(item => item.track)
+        //.filter(track => track?.preview_url);
+
+      const formatted = tracks.map(track => {
+        const album = track.album || {};
+        const images = album.images || [];
+
+        return {
+          id: track.id,
+          name: track.name,
+          preview_url: track.preview_url || null,
+          hasPreview: Boolean(track.preview_url),
+          albumArt: images[0]?.url || 'https://example.com/default-image.jpg',
+          artists: track.artists.map(artist => artist.name).join(', '),
+        };
+      });
+
+      console.log(`Fetched ${response.items.length} items from playlist ${playlistId}`);
+      console.log(`${tracks.length} tracks have a preview_url`);
+
+
+      allTracks.push(...formatted);
+    }
+
+    return allTracks;
   } catch (error) {
     console.error('Error in fetchPopularTracks:', error);
     return [];
   }
 }
 
-
-// Function to get random songs from popular tracks
 const getRandomSongs = async () => {
   try {
-    const response = await fetchPopularTracks();
-    
-    // Extract tracks from the response
-    const tracks = response.albums.items.flatMap(album => album.tracks.items);
-
-    // Shuffle and select a subset if needed
-    const shuffledTracks = tracks.sort(() => 0.5 - Math.random()); // Shuffle array
-    return shuffledTracks.slice(0, 20); // Return a subset of random tracks
+    const tracks = await fetchPopularTracks();
+    const shuffledTracks = tracks.sort(() => 0.5 - Math.random());
+    return shuffledTracks.slice(0, 20);
+    console.log(`Total tracks after merging: ${tracks.length}`);
   } catch (error) {
     console.error('Failed to fetch random songs', error);
-    return []; // Return an empty array on error
+    return [];
   }
+  
 };
 
 export { fetchWebApi, searchArtists, searchSongs, fetchPopularTracks, getRandomSongs };

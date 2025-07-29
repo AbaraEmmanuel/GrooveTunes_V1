@@ -1,141 +1,610 @@
 import React, { useState } from 'react';
-import { TextField, Button, Container, Grid, Card, CardContent, Typography, CardActionArea, CardMedia, AppBar, Toolbar, IconButton, Box } from '@mui/material';
-import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import CustomAudioPlayer from './CustomAudioPlayer';
+import { 
+  Container, 
+  Typography, 
+  Grid, 
+  Card, 
+  CardContent, 
+  Box, 
+  AppBar, 
+  Toolbar, 
+  Button, 
+  Snackbar,
+  Alert,
+  IconButton,
+  TextField,
+  CircularProgress,
+  useTheme,
+  useMediaQuery
+} from '@mui/material';
+import { 
+  PlayArrow, 
+  Pause, 
+  SkipNext, 
+  SkipPrevious, 
+  Search, 
+  QueueMusic, 
+  Logout,
+  Home,
+  AccountCircle,
+  Add,
+  ArrowBack
+} from '@mui/icons-material';
+import { useNavigate, Link } from 'react-router-dom';
 import { searchSongs } from '../services/spotifyApi';
-import { useNavigate } from 'react-router-dom';
 import { addSongToPlaylist } from '../services/playlistService';
 import { useAuth } from '../context/AuthContext';
 
 const ArtistSearch = () => {
   const [songQuery, setSongQuery] = useState('');
   const [songs, setSongs] = useState([]);
-  const [currentSong, setCurrentSong] = useState('');
+  const [currentSong, setCurrentSong] = useState(null);
   const [currentSongInfo, setCurrentSongInfo] = useState(null);
+  const [playingSongId, setPlayingSongId] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  const { logout, currentUser } = useAuth();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
-  const { logout } = useAuth();
+
+  // Snackbar state
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
   const handleSongSubmit = async (e) => {
     e.preventDefault();
+    if (!songQuery.trim()) return;
+    
     try {
+      setIsLoading(true);
+      setHasSearched(true);
       const response = await searchSongs(songQuery);
-      setSongs(response.tracks.items);
+      setSongs(response.tracks.items.map(item => ({
+        id: item.id,
+        name: item.name,
+        preview_url: item.preview_url,
+        albumArt: item.album.images[0]?.url,
+        artists: item.artists,
+        album: item.album
+      })));
     } catch (error) {
       console.error('Error fetching songs:', error);
+      setSnackbarMessage('Error searching for songs');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const playSong = (songUrl, songInfo) => {
     setCurrentSong(songUrl);
     setCurrentSongInfo(songInfo);
+    setPlayingSongId(songInfo.id);
+    setIsPlaying(true);
+  };
+
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleCardClick = (song) => {
+    if (!song.preview_url) {
+      setSnackbarMessage('Preview unavailable for this track');
+      setSnackbarSeverity('warning');
+      setSnackbarOpen(true);
+      return;
+    }
+
+    playSong(song.preview_url, {
+      name: song.name,
+      albumArt: song.albumArt,
+      artists: song.artists,
+      id: song.id
+    });
   };
 
   const handleAddToPlaylist = async (song) => {
     try {
       await addSongToPlaylist(song);
-      alert('Song added to playlist!');
+      setSnackbarMessage('Song added to playlist!');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
     } catch (error) {
       console.error('Error adding song to playlist:', error);
+      setSnackbarMessage('Error adding song to playlist');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
     }
   };
 
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
   return (
-    <>
-      <AppBar position="static" sx={{ backgroundColor: '#1DB954' }}>
+    <Box sx={{ 
+      minHeight: '100vh',
+      background: 'linear-gradient(to bottom, #f5f5f5, #ffffff)'
+    }}>
+      {/* App Bar */}
+      <AppBar position="sticky" sx={{ 
+        backgroundColor: '#121212',
+        backgroundImage: 'linear-gradient(rgba(29, 185, 84, 0.2), rgba(29, 185, 84, 0))',
+        boxShadow: 'none',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+      }}>
         <Toolbar>
-          <IconButton edge="start" color="inherit" onClick={() => navigate('/playlist')}>
-            <ArrowBackIcon />
+          <IconButton 
+            edge="start" 
+            color="inherit" 
+            onClick={() => navigate(-1)}
+            sx={{ mr: 2 }}
+          >
+            <ArrowBack />
           </IconButton>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Song Search
-          </Typography>
-          <Button color="inherit" onClick={logout} sx={{ marginLeft: 2 }}>
-            Logout
-          </Button>
+
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            flexGrow: 1 
+          }}>
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontWeight: 'bold',
+                background: 'linear-gradient(to right, #1DB954, #1ED760)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                fontSize: isMobile ? '1.25rem' : '1.5rem'
+              }}
+            >
+              GrooveTunes
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton 
+              color="inherit" 
+              component={Link} 
+              to="/homepage" 
+              sx={{ 
+                mr: isMobile ? 0 : 2,
+                color: '#ffffff'
+              }}
+            >
+              <Home />
+            </IconButton>
+            <IconButton 
+              color="inherit" 
+              component={Link} 
+              to="/playlist" 
+              sx={{ 
+                mr: isMobile ? 0 : 2,
+                color: '#ffffff'
+              }}
+            >
+              <QueueMusic />
+            </IconButton>
+            <IconButton 
+              color="inherit" 
+              component={Link} 
+              to="/search" 
+              sx={{ 
+                mr: isMobile ? 0 : 2,
+                color: '#1DB954'
+              }}
+            >
+              <Search />
+            </IconButton>
+            <IconButton 
+              color="inherit" 
+              onClick={() => navigate('/profile')}
+              sx={{ 
+                mr: isMobile ? 0 : 2,
+                color: '#ffffff'
+              }}
+            >
+              <AccountCircle />
+            </IconButton>
+            <Button 
+              variant="outlined" 
+              color="inherit" 
+              onClick={() => logout()}
+              startIcon={<Logout />}
+              sx={{ 
+                ml: 2,
+                color: '#ffffff',
+                borderColor: 'rgba(255, 255, 255, 0.3)',
+                '&:hover': {
+                  borderColor: '#ffffff',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                }
+              }}
+            >
+              {!isMobile && 'Logout'}
+            </Button>
+          </Box>
         </Toolbar>
       </AppBar>
 
-      <Container sx={{ mt: 4 }}>
-        <Grid container spacing={3} justifyContent="center" alignItems="center">
-          <Grid item xs={12}>
-            <form onSubmit={handleSongSubmit}>
-              <Grid container spacing={2} alignItems="center">
-                <Grid item xs={8}>
-                  <TextField
-                    label="Search for a song"
-                    variant="outlined"
-                    fullWidth
-                    value={songQuery}
-                    onChange={(e) => setSongQuery(e.target.value)}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                          borderColor: '#1DB954',
-                        },
-                        '&:hover fieldset': {
-                          borderColor: '#1DB954',
-                        },
-                      },
-                      '& .MuiInputLabel-root': {
-                        color: '#1DB954',
-                      },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <Button type="submit" variant="contained" color="primary" sx={{ height: '100%' }}>
-                    Search Songs
-                  </Button>
-                </Grid>
-              </Grid>
-            </form>
-          </Grid>
+      {/* Main Content */}
+      <Container maxWidth="xl" sx={{ 
+        pt: 4,
+        pb: currentSong ? '120px' : 4,
+        minHeight: 'calc(100vh - 64px)'
+      }}>
+        <Box sx={{ textAlign: 'center', mb: 6 }}>
+          <Typography 
+            variant={isMobile ? "h4" : "h3"} 
+            gutterBottom 
+            sx={{ 
+              fontWeight: 'bold',
+              color: '#1DB954',
+              mb: 2
+            }}
+          >
+            Search Songs
+          </Typography>
+          <Typography 
+            variant={isMobile ? "h6" : "h5"} 
+            sx={{ 
+              mb: 4,
+              color: 'text.secondary',
+              maxWidth: '800px',
+              mx: 'auto'
+            }}
+          >
+            Discover new music from millions of tracks
+          </Typography>
+        </Box>
 
-          <Grid item xs={12} sx={{ mt: 4 }}>
-            <Grid container spacing={4}>
-              {songs.map((song) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={song.id}>
-                  <Card sx={{ borderRadius: '12px', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)', transition: 'transform 0.3s', '&:hover': { transform: 'scale(1.05)' } }}>
-                    <CardActionArea onClick={() => playSong(song.preview_url, { name: song.name, albumArt: song.album.images[0].url })}>
-                      <CardMedia
-                        component="img"
-                        height="140"
-                        image={song.album.images[0].url}
-                        alt={song.name}
-                      />
-                      <CardContent>
-                        <Typography gutterBottom variant="h6" component="div" noWrap sx={{ fontWeight: 'bold', color: '#333' }}>
-                          {song.name}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary" sx={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-                          {song.artists.map((artist) => artist.name).join(', ')}
-                        </Typography>
-                      </CardContent>
-                    </CardActionArea>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      sx={{ width: '100%', borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
+        {/* Search Form */}
+        <Box component="form" onSubmit={handleSongSubmit} sx={{ mb: 6 }}>
+          <Grid container spacing={2} alignItems="center" justifyContent="center">
+            <Grid item xs={12} md={8}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                label="Search for songs"
+                value={songQuery}
+                onChange={(e) => setSongQuery(e.target.value)}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '50px',
+                    '& fieldset': {
+                      borderColor: '#1DB954',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#1DB954',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#1DB954',
+                    },
+                  },
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton 
+                      type="submit" 
+                      sx={{ 
+                        color: '#1DB954',
+                        '&:hover': {
+                          backgroundColor: 'rgba(29, 185, 84, 0.1)'
+                        }
+                      }}
+                    >
+                      <Search />
+                    </IconButton>
+                  ),
+                }}
+              />
+            </Grid>
+          </Grid>
+        </Box>
+
+        {/* Results */}
+        {isLoading ? (
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: '50vh'
+          }}>
+            <CircularProgress sx={{ color: '#1DB954' }} />
+          </Box>
+        ) : songs.length > 0 ? (
+          <Grid container spacing={isMobile ? 2 : 4}>
+            {songs.map((song) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={song.id}>
+                <Card 
+                  sx={{ 
+                    borderRadius: '16px', 
+                    overflow: 'hidden', 
+                    position: 'relative',
+                    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)',
+                    transition: 'transform 0.3s, box-shadow 0.3s',
+                    '&:hover': { 
+                      transform: 'translateY(-8px)',
+                      boxShadow: '0 16px 32px rgba(0, 0, 0, 0.2)',
+                      cursor: 'pointer',
+                      '& .play-button': {
+                        opacity: 1,
+                        transform: 'translateY(0)'
+                      }
+                    }
+                  }}
+                >
+                  <Box sx={{ position: 'relative' }}>
+                    <img 
+                      src={song.albumArt || 'default-image-url'} 
+                      alt={song.name} 
+                      style={{ 
+                        width: '100%', 
+                        height: isMobile ? '180px' : '240px',
+                        objectFit: 'cover',
+                        display: 'block'
+                      }} 
+                    />
+                    <Box 
+                      className="play-button"
+                      sx={{
+                        position: 'absolute',
+                        bottom: 16,
+                        right: 16,
+                        width: 48,
+                        height: 48,
+                        borderRadius: '50%',
+                        backgroundColor: '#1DB954',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        opacity: playingSongId === song.id ? 1 : 0,
+                        transform: playingSongId === song.id ? 'translateY(0)' : 'translateY(8px)',
+                        transition: 'all 0.3s ease',
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+                        '&:hover': {
+                          backgroundColor: '#1ED760',
+                          transform: 'scale(1.1)'
+                        },
+                        backgroundColor: song.preview_url ? '#1DB954' : '#999',
+                        cursor: song.preview_url ? 'pointer' : 'not-allowed',
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCardClick(song);
+                      }}
+                    >
+                      {song.preview_url ? (
+                        playingSongId === song.id && isPlaying ? (
+                          <Pause sx={{ color: '#fff' }} />
+                        ) : (
+                          <PlayArrow sx={{ color: '#fff' }} />
+                        )
+                      ) : (
+                        <PlayArrow sx={{ color: '#ccc' }} />
+                      )}
+                    </Box>
+                    <IconButton
+                      sx={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
+                        backgroundColor: 'rgba(29, 185, 84, 0.7)',
+                        '&:hover': {
+                          backgroundColor: 'rgba(29, 185, 84, 0.9)'
+                        }
+                      }}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleAddToPlaylist(song);
                       }}
                     >
-                      Add to Playlist
-                    </Button>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
+                      <Add sx={{ color: '#fff' }} />
+                    </IconButton>
+                  </Box>
+                  <CardContent sx={{ 
+                    backgroundColor: 'background.paper',
+                    borderTop: '1px solid rgba(0, 0, 0, 0.1)'
+                  }}>
+                    <Typography 
+                      gutterBottom 
+                      variant="h6" 
+                      component="div" 
+                      sx={{ 
+                        fontWeight: 'bold',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}
+                    >
+                      {song.name}
+                    </Typography>
+                    <Typography 
+                      variant="body2" 
+                      color="text.secondary"
+                      sx={{
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}
+                    >
+                      {song.artists.map(artist => artist.name).join(', ')}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
-        </Grid>
-        {currentSong && (
-          <Box sx={{ position: 'fixed', bottom: 20, left: 0, right: 0, zIndex: 1300 }}>
-            <CustomAudioPlayer currentSong={currentSong} songInfo={currentSongInfo} />
+        ) : hasSearched ? (
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: '50vh'
+          }}>
+            <Typography variant="h6" color="textSecondary">
+              No results found for "{songQuery}"
+            </Typography>
+          </Box>
+        ) : (
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: '50vh'
+          }}>
+            <Typography variant="h6" color="textSecondary">
+              Enter a search term to find songs
+            </Typography>
           </Box>
         )}
       </Container>
-    </>
+
+      {/* Player Bar */}
+      {currentSong && (
+        <Box sx={{ 
+          position: 'fixed', 
+          bottom: 0, 
+          left: 0, 
+          right: 0, 
+          height: '80px',
+          backgroundColor: '#181818',
+          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+          zIndex: 1300,
+          display: 'flex',
+          alignItems: 'center',
+          px: 2,
+          boxShadow: '0 -4px 12px rgba(0, 0, 0, 0.3)'
+        }}>
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            width: '100%',
+            maxWidth: '1400px',
+            mx: 'auto'
+          }}>
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              width: '30%',
+              minWidth: '200px'
+            }}>
+              <img 
+                src={currentSongInfo?.albumArt || 'default-image-url'} 
+                alt={currentSongInfo?.name} 
+                style={{ 
+                  width: '56px', 
+                  height: '56px',
+                  borderRadius: '4px',
+                  objectFit: 'cover',
+                  marginRight: '16px'
+                }} 
+              />
+              <Box>
+                <Typography 
+                  variant="body1" 
+                  sx={{ 
+                    fontWeight: 'bold',
+                    color: '#ffffff',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    maxWidth: '200px'
+                  }}
+                >
+                  {currentSongInfo?.name}
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    maxWidth: '200px'
+                  }}
+                >
+                  {currentSongInfo?.artists?.map(artist => artist.name).join(', ')}
+                </Typography>
+              </Box>
+            </Box>
+
+            <Box sx={{ 
+              flex: 1, 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center',
+              px: 2
+            }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <IconButton 
+                  onClick={() => {}}
+                  disabled={true}
+                  sx={{ 
+                    color: '#ffffff',
+                    '&:hover': {
+                      color: '#1DB954'
+                    }
+                  }}
+                >
+                  <SkipPrevious />
+                </IconButton>
+                <IconButton 
+                  onClick={togglePlayPause}
+                  sx={{ 
+                    backgroundColor: '#1DB954',
+                    color: '#ffffff',
+                    mx: 2,
+                    '&:hover': {
+                      backgroundColor: '#1ED760',
+                      transform: 'scale(1.1)'
+                    }
+                  }}
+                >
+                  {isPlaying ? <Pause /> : <PlayArrow />}
+                </IconButton>
+                <IconButton 
+                  onClick={() => {}}
+                  disabled={true}
+                  sx={{ 
+                    color: '#ffffff',
+                    '&:hover': {
+                      color: '#1DB954'
+                    }
+                  }}
+                >
+                  <SkipNext />
+                </IconButton>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+      )}
+
+      {/* Snackbar for user feedback */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={handleSnackbarClose} 
+          severity={snackbarSeverity}
+          sx={{ 
+            width: '100%',
+            borderRadius: '12px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+          }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </Box>
   );
 };
 
