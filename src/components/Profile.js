@@ -342,7 +342,7 @@ const Profile = () => {
                       <Typography variant="body1">••••••••</Typography>
                       <Button
                         component={Link}
-                        to="/password-reset"
+                        to="/reset-password"
                         startIcon={<LockReset />}
                         sx={{ ml: 2, color: '#1DB954', '&:hover': { color: '#1ED760' } }}
                       >
