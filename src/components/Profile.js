@@ -289,7 +289,7 @@ const Profile = () => {
                         </Box>
                         <Button
                           component={Link}
-                          to="/password-reset"
+                          to="/reset-password"
                           startIcon={<LockReset />}
                           sx={{ color: '#1DB954', '&:hover': { color: '#1ED760' } }}
                         >
